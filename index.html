@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عرض سعر تنفيذي - تسليم تاكسي 2025 | Moment+</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --brand:#ff6b35; --brand-2:#f7931e; --dark:#2c3e50; --dark-2:#34495e;
+      --muted:#6c757d; --bg:#f5f7fa; --card:#ffffff; --ok:#28a745; --rim:#e9ecef;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.7;background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);color:#333;padding:20px}
+    .container{max-width:930px;margin-inline:auto;background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);overflow:hidden}
+    .header{position:relative;padding:32px;text-align:center;color:#fff;background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%)}
+    .header h1{margin:0;font-size:2.1rem;font-weight:800}
+    .subtitle{margin-top:8px;opacity:.95}
+    .content{padding:34px}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:0 0 22px;border-right:5px solid var(--brand);background:#f8f9fa;padding:18px;border-radius:12px}
+    .info-item{display:flex;gap:10px;align-items:center}
+    .info-item strong{color:var(--brand);min-width:86px}
+    .section{margin:28px 0}
+    .section h2{font-size:1.25rem;color:var(--dark);margin:0 0 12px;border-bottom:3px solid var(--brand);padding-bottom:8px}
+    .section h3{font-size:1.05rem;color:var(--dark-2);margin:20px 0 10px}
+    .features-list{list-style:none;margin:0;padding:0}
+    .features-list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f1f3f4}
+    .features-list li::before{content:"✓";color:var(--ok);font-weight:700}
+    .highlight-box{background:linear-gradient(135deg,#fff5f0,#ffffff);border:2px solid var(--brand);border-radius:12px;padding:16px;margin:14px 0}
+    .pricing-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+    .pricing-card{border:2px solid var(--rim);border-radius:14px;padding:18px;background:#fff;transition:.25s;position:relative}
+    .pricing-card:hover{transform:translateY(-4px);border-color:var(--brand);box-shadow:0 14px 30px rgba(255,107,53,.12)}
+    .pricing-card.featured{border-color:var(--brand);background:linear-gradient(135deg,#fff5f0 0%,#fff 100%)}
+    .pricing-card.featured::before{content:"الأكثر شيوعاً";position:absolute;top:12px;left:12px;background:var(--brand);color:#fff;font-weight:700;padding:4px 12px;border-radius:999px;font-size:.8rem}
+    .pricing-header{text-align:center;margin-bottom:12px}
+    .pricing-title{font-size:1.1rem;font-weight:800;color:var(--dark)}
+    .pricing-amount{font-size:2.1rem;font-weight:900;color:var(--brand)}
+    .pricing-period{color:var(--muted);font-size:.9rem}
+    .table-container{overflow-x:auto;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+    table{width:100%;border-collapse:collapse;background:#fff}
+    th{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;padding:12px 10px;text-align:center}
+    td{padding:11px 10px;border-bottom:1px solid #eef0f2;text-align:center}
+    tr:nth-child(even){background:#fafbfc}
+    tr:hover{background:#fff5f0}
+    .cta-section{background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);color:#fff;padding:24px;border-radius:14px;text-align:center;margin-top:28px}
+    .cta-button{display:inline-block;background:var(--brand);color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:800;margin:8px;transition:.2s}
+    .cta-button:hover{background:#e55a2b;transform:translateY(-2px);box-shadow:0 8px 18px rgba(255,107,53,.28)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:0 0 14px}
+    .toolbar .controls{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{cursor:pointer;border:none;border-radius:10px;background:#fff;padding:10px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);font-weight:700;color:var(--dark)}
+    .btn:hover{box-shadow:0 3px 10px rgba(0,0,0,.12)}
+    .badge{display:inline-block;background:#ffe8df;color:#9c3b14;border:1px solid #ffccbb;border-radius:999px;padding:4px 10px;font-size:.8rem}
+    .footer{background:#f8f9fa;padding:16px;text-align:center;color:var(--muted);font-size:.9rem}
+    /* === New: Configurator + Logo === */
+    .brandbar{position:absolute;inset-inline-start:16px;inset-block-start:16px;display:flex;align-items:center;gap:10px}
+    .brandbar img{height:34px;width:auto;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+    .brandbar .brandname{font-weight:800}
+    .config{background:#fcfcfd;border:1px solid var(--rim);border-radius:12px;padding:14px;margin:0 0 16px}
+    .config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+    .config label{display:block;font-size:.85rem;color:var(--dark-2);margin:0 0 6px}
+    .config input,.config select{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:10px;background:#fff}
+    .quote-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px}
+    .qcard{background:linear-gradient(135deg,#fff,#fff5f0);border:1px solid #ffd7c6;border-radius:12px;padding:12px;text-align:center}
+    .qcard .lbl{color:#9c3b14;font-size:.85rem}
+    .qcard .val{font-size:1.15rem;font-weight:800;color:var(--dark)}
+    @media (max-width:768px){body{padding:12px}.container{border-radius:12px}.header h1{font-size:1.6rem}.pricing-amount{font-size:1.8rem}.content{padding:20px}}
+    @media print{body{background:#fff;padding:0}.container{box-shadow:none;border-radius:0}.config,.toolbar,.cta-section{display:none}a[href]:after{content:"" !important}}
+  </style>
+</head>
+<body>
+  <div class="container" role="document">
+    <header class="header">
+      <div class="brandbar">
+        <img id="logo" alt="Moment+" src="" onerror="this.style.display='none'" />
+      </div>
+      <h1>عرض سعر تنفيذي لتنفيذ الخطة التسويقية</h1>
+      <div class="subtitle">تسليم تاكسي 2025 | Moment+</div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar" aria-label="أدوات الصفحة">
+        <div class="controls">
+          <button class="btn" id="btnPrint">📄 طباعة / حفظ PDF</button>
+          <button class="btn" id="btnToggleA">إظهار خيار A (800 OMR)</button>
+          <button class="btn" id="btnToggleB">إظهار خيار B (1,000 OMR شامل)</button>
+        </div>
+        <span class="badge" id="today"></span>
+      </div>
+
+      <!-- Configurator -->
+      <section class="config" id="config">
+        <div class="config-grid">
+          <div>
+            <label for="optSelect">الخيار</label>
+            <select id="optSelect">
+              <option value="A">A — 800 OMR (قبل الضريبة)</option>
+              <option value="B">B — 1,000 OMR (شامل VAT)</option>
+            </select>
+          </div>
+          <div id="influencerWrap">
+            <label for="influencers">عدد المؤثرين (100 OMR/مؤثر) — خيار A</label>
+            <input type="number" id="influencers" min="0" step="1" value="0" />
+          </div>
+          <div>
+            <label for="vat">نسبة VAT٪</label>
+            <input type="number" id="vat" min="0" max="20" step="0.5" value="5" />
+          </div>
+          <div>
+            <label for="logoUrl">رابط الشعار (اختياري)</label>
+            <input type="url" id="logoUrl" placeholder="https://.../logo.png" />
+          </div>
+        </div>
+        <div class="quote-summary" aria-live="polite">
+          <div class="qcard"><div class="lbl">الإجمالي قبل الضريبة</div><div class="val" id="sumSubtotal">—</div></div>
+          <div class="qcard"><div class="lbl">قيمة الضريبة</div><div class="val" id="sumVat">—</div></div>
+          <div class="qcard"><div class="lbl">الإجمالي المستحق</div><div class="val" id="sumTotal">—</div></div>
+        </div>
+      </section>
+
+      <section class="info-grid" aria-label="بيانات أساسية">
+        <div class="info-item"><strong>إلى:</strong><span id="toName">تسليم تاكسي</span></div>
+        <div class="info-item"><strong>من:</strong><span id="fromName">Moment+</span></div>
+        <div class="info-item"><strong>التاريخ:</strong><span id="issueDate">—</span></div>
+        <div class="info-item"><strong>صالح لمدة:</strong><span>30 يوماً</span></div>
+        <div class="info-item"><strong>التواصل:</strong><span>info@momentconnect.com</span></div>
+        <div class="info-item"><strong>الهاتف:</strong><span>+968 98567383 / +968 71717020</span></div>
+      </section>
+
+      <section class="section" id="summary">
+        <h2>🎯 الملخص التنفيذي</h2>
+        <ul class="features-list">
+          <li>تنفيذ خطة تشغيلية موحَّدة لرفع الرحلات ≥ 30%.</li>
+          <li>زيادة تحميلات التطبيق ≥ 50%.</li>
+          <li>تحسين التقييم العام إلى ⭐ 4.6+.</li>
+          <li>خياران مرنان للميزانية الشهرية حسب الجدوى.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="scope">
+        <h2>📋 نطاق العمل (ساري على الخيارين)</h2>
+        <div class="highlight-box">
+          <h3>القنوات المشمولة</h3>
+          <p>Instagram, TikTok, Facebook, X, YouTube Shorts, LinkedIn + أساسيات SEO</p>
+          <h3>الرسائل المباشرة</h3>
+          <p>WhatsApp/SMS (حتى 8 حملات شهرياً للشرائح المختلفة)</p>
+          <h3>المحاور الخمسة الأسبوعية</h3>
+          <p>توصيل الطرود • مول عمان • مترو عمان • تجربة التطبيق (UX) • تسليم شِفت</p>
+        </div>
+      </section>
+
+      <section class="section" id="pricing">
+        <h2>💰 خيارات التسعير</h2>
+        <div class="pricing-options">
+          <article class="pricing-card" id="optionA" aria-label="الخيار A">
+            <div class="pricing-header">
+              <div class="pricing-title">الخيار A - الخطة الموحدة</div>
+              <div class="pricing-amount">800</div>
+              <div class="pricing-period">ريال عماني شهرياً (قبل الضريبة)</div>
+            </div>
+            <ul class="features-list">
+              <li>8 فيديو قصير شهرياً</li>
+              <li>12 بوست ثابت</li>
+              <li>16 ستوري</li>
+              <li>4 عروض/كوبونات</li>
+              <li>4 قصص عملاء/كباتن</li>
+              <li>حتى 8 حملات WhatsApp/SMS</li>
+              <li>إحالات ومسابقات أساسية</li>
+            </ul>
+            <div class="highlight-box">
+              <h3 style="margin:0 0 6px">المؤثرون (إضافة):</h3>
+              <p><strong>+100 OMR لكل مؤثر</strong> — يُضاف حسب العدد شهريًا.</p>
+              <p style="margin:6px 0 0">مثال: 800 + (2×100) = 1,000 قبل الضريبة → VAT 50 → الإجمالي 1,050 OMR.</p>
+            </div>
+          </article>
+
+          <article class="pricing-card featured" id="optionB" aria-label="الخيار B">
+            <div class="pricing-header">
+              <div class="pricing-title">الخيار B - الباقة الشاملة</div>
+              <div class="pricing-amount">1,000</div>
+              <div class="pricing-period">ريال عماني شهرياً (شامل VAT)</div>
+            </div>
+            <ul class="features-list">
+              <li>12 فيديو شهرياً (3 أسبوعياً)</li>
+              <li>8 بوست ثابت (2 أسبوعياً)</li>
+              <li>20 ستوري (5 أسبوعياً)</li>
+              <li>تغطية المحاور الخمسة أسبوعيًا</li>
+              <li>نسخ نصية + جدولة أساسية</li>
+              <li>تقارير أسبوعية موجزة</li>
+              <li>بدون تصوير ميداني</li>
+              <li>بدون إدارة إعلانات</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Add-ons & Cart -->
+      <section class="section" id="addons">
+        <h2>🧩 الإضافات (Add‑ons) وسلة الطلب</h2>
+        <p>اختر الإضافات المناسبة للسوق العُماني. سيتم تحديث الإجمالي تلقائيًا، ويمكنك <strong>إرسال السلة عبر واتساب</strong> للرقم <strong>+968 98567383</strong>.</p>
+        <div class="highlight-box" style="padding:0">
+          <table>
+            <thead>
+              <tr>
+                <th style="min-width:160px">الإضافة</th>
+                <th>الوصف</th>
+                <th>سعر الوحدة (OMR)</th>
+                <th>الكمية</th>
+                <th>مجموع البند</th>
+              </tr>
+            </thead>
+            <tbody id="addonsBody">
+              <tr>
+                <td><label><input type="checkbox" class="addon-check" data-key="field"/> تصوير ميداني نصف يوم</label></td>
+                <td>مخرج + مصوّر + مساعد + معدات خفيفة</td>
+                <td data-price>250</td>
+                <td><input type="number" class="addon-qty" data-key="field" min="1" value="1" disabled></td>
+                <td class="addon-sum" data-key="field">0</td>
+              </tr>
+              <tr>
+                <td><label><input type="checkbox" class="addon-check" data-key="vo"/> تعليق صوتي (VO) عُماني</label></td>
+                <td>VO احترافي حتى 60 ثانية لكل فيديو</td>
+                <td data-price>60</td>
+                <td><input type="number" class="addon-qty" data-key="vo" min="1" value="1" disabled></td>
+                <td class="addon-sum" data-key="vo">0</td>
+              </tr>
+              <tr>
+                <td><label><input type="checkbox" class="addon-check" data-key="ads"/> إدارة إعلانات ممولة</label></td>
+                <td>إعداد/تحسين/تقارير شهرية (ميزانية الوسائط تُضاف منفصلة)</td>
+                <td data-price>250</td>
+                <td><input type="number" class="addon-qty" data-key="ads" min="1" value="1" disabled></td>
+                <td class="addon-sum" data-key="ads">0</td>
+              </tr>
+              <tr>
+                <td><label><input type="checkbox" class="addon-check" data-key="motion"/> قالب موشن مخصص</label></td>
+                <td>Template يُستخدم متكررًا ويُخفض زمن الإنتاج</td>
+                <td data-price>120</td>
+                <td><input type="number" class="addon-qty" data-key="motion" min="1" value="1" disabled></td>
+                <td class="addon-sum" data-key="motion">0</td>
+              </tr>
+              <tr>
+                <td><label><input type="checkbox" class="addon-check" data-key="influencer"/> مؤثرون</label></td>
+                <td>رسوم الأتعاب لكل مؤثر (يُنصح 1–3 شهريًا)</td>
+                <td data-price>100</td>
+                <td><input type="number" class="addon-qty" data-key="influencer" min="1" value="1" disabled></td>
+                <td class="addon-sum" data-key="influencer">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="quote-summary" aria-live="polite">
+          <div class="qcard"><div class="lbl">إجمالي الإضافات (قبل VAT)</div><div class="val" id="addSubtotal">0.00 OMR</div></div>
+          <div class="qcard"><div class="lbl">ضريبة الإضافات</div><div class="val" id="addVat">0.00 OMR</div></div>
+          <div class="qcard"><div class="lbl">الإجمالي الكلي (الأساس + الإضافات)</div><div class="val" id="grandTotal">—</div></div>
+        </div>
+
+        <div style="margin-top:10px;text-align:center">
+          <a class="cta-button" id="btnWA" target="_blank" rel="noopener" href="https://wa.me/96898567383">📲 إرسال السلة عبر واتساب</a>
+        </div>
+      </section>
+
+      <section class="section" id="weeklyFixed">
+        <h2>🗓️ البنود الأسبوعية الثابتة (لإرسالها للعميل)</h2>
+        <div class="highlight-box">
+          <ul class="features-list">
+            <li><strong>كل أسبوع:</strong></li>
+            <li><strong>3 فيديوهات:</strong> (1 Reel للطرود) + (1 Reel يتناوب بين المول/المترو/الشِفت) + (1 Reel UX قصير).</li>
+            <li><strong>2 بوست ثابت</strong> (1:1 أو 4:5).</li>
+            <li><strong>5 ستوري</strong> تغطي المحاور الخمسة (FAQ/CTA/تذكير/كوبون إن وُجد).</li>
+            <li><strong>شهريًا (4 أسابيع):</strong> 12 فيديو + 8 بوست + 20 ستوري.</li>
+            <li><strong>يغطي المحاور الخمسة:</strong> توصيل الطرود، مول عمان، مترو عمان، تجربة التطبيق، تسليم شِفت.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="invoice1000">
+        <h2>📊 تفاصيل الباقة الشاملة (1,000 OMR)</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>البند</th>
+                <th>الوصف</th>
+                <th>الكمية</th>
+                <th>سعر الوحدة</th>
+                <th>الإجمالي</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>ريلز قصيرة</td>
+                <td>9:16 (15–20ث) — الطرود/المول/المترو/الشِفت</td>
+                <td>8 فيديو</td>
+                <td>58.00</td>
+                <td><strong>464.00</strong></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Reel UX</td>
+                <td>9:16 (20–25ث) — شرح خطوة داخل التطبيق</td>
+                <td>4 فيديو</td>
+                <td>70.00</td>
+                <td><strong>280.00</strong></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>بوستات ثابتة</td>
+                <td>تصاميم 1:1 أو 4:5 مع نسخة نص بديلة</td>
+                <td>8 بوست</td>
+                <td>16.00</td>
+                <td><strong>128.00</strong></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>ستوريات</td>
+                <td>9:16 — قوالب + إنتاج أسبوعي يغطي المحاور</td>
+                <td>20 ستوري</td>
+                <td>3.90</td>
+                <td><strong>78.00</strong></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>نسخ نصية + جدولة</td>
+                <td>كتابة كابتشنات وجدولة بسيطة</td>
+                <td>شهري</td>
+                <td>50.00</td>
+                <td><strong>50.00</strong></td>
+              </tr>
+              <tr style="background:#fff5f0;font-weight:800">
+                <td colspan="5">الإجمالي شامل VAT 5%</td>
+                <td><strong>1,000.00 OMR</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="goals">
+        <h2>📈 الأهداف المتوقعة</h2>
+        <div class="highlight-box">
+          <ul class="features-list">
+            <li>زيادة الرحلات بنسبة 30% أو أكثر.</li>
+            <li>زيادة تحميلات التطبيق بنسبة 50% أو أكثر.</li>
+            <li>رفع التقييم العام إلى 4.6 نجوم أو أكثر.</li>
+            <li>تعزيز الوعي بالعلامة في السوق العُماني.</li>
+            <li>بناء مجتمع نشط من العملاء والكباتن.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="cta-section">
+        <h3>🚀 جاهزون للانطلاق؟</h3>
+        <p>اختر الباقة المناسبة وارسِل اختيارك فورًا عبر واتساب.</p>
+        <a class="cta-button" id="btnWAA" href="#">اختيار الخيار A</a>
+        <a class="cta-button" id="btnWAB" href="#">اختيار الخيار B</a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><strong>Moment+</strong> | وكالة التسويق الرقمي الرائدة في عُمان</p>
+      <p>جميع الأسعار بالريال العُماني • العرض ساري لمدة 30 يوماً من تاريخ الإصدار</p>
+    </footer>
+  </div>
+
+  <script>
+    // ✅ تعبئة تاريخ اليوم تلقائياً (بتوقيت عُمان)
+    (function(){
+      try{
+        const now = new Date();
+        const fmt = new Intl.DateTimeFormat('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Asia/Muscat'});
+        document.getElementById('issueDate').textContent = fmt.format(now);
+        document.getElementById('today').textContent = 'اليوم: ' + fmt.format(now);
+      }catch(e){ document.getElementById('issueDate').textContent = '13-10-2025'; }
+    })();
+
+    // ✅ طباعة/حفظ PDF
+    document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
+
+    // ✅ إظهار/إخفاء خيارات التسعير
+    (function(){
+      const optA = document.getElementById('optionA');
+      const optB = document.getElementById('optionB');
+      document.getElementById('btnToggleA').addEventListener('click', ()=>{ optA.style.display = (optA.style.display==='none') ? '' : 'none'; });
+      document.getElementById('btnToggleB').addEventListener('click', ()=>{ optB.style.display = (optB.style.display==='none') ? '' : 'none'; });
+    })();
+
+    // ✅ مهيئ الحاسبة البسيطة لقسم التهيئة
+    (function(){
+      const opt = document.getElementById('optSelect');
+      const inf = document.getElementById('influencers');
+      const vat = document.getElementById('vat');
+      const subEl = document.getElementById('sumSubtotal');
+      const vatEl = document.getElementById('sumVat');
+      const totEl = document.getElementById('sumTotal');
+      const logoInput = document.getElementById('logoUrl');
+      const logoImg = document.getElementById('logo');
+
+      function fmt(n){return new Intl.NumberFormat('ar-EG',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n) + ' OMR'}
+      function calc(){
+        const v = Math.max(0, parseFloat(vat.value||'5'))/100;
+        if(opt.value==='A'){
+          const influencers = Math.max(0, parseInt(inf.value||'0',10));
+          const subtotal = 800 + influencers*100;
+          const tax = subtotal * v;
+          const total = subtotal + tax;
+          subEl.textContent = fmt(subtotal);
+          vatEl.textContent = fmt(tax);
+          totEl.textContent = fmt(total);
+        }else{
+          const total = 1000; // شامل الضريبة
+          const subtotal = total/(1+v);
+          const tax = total - subtotal;
+          subEl.textContent = fmt(subtotal);
+          vatEl.textContent = fmt(tax);
+          totEl.textContent = fmt(total);
+        }
+        // إظهار/إخفاء خانة المؤثرين حسب الخيار
+        document.getElementById('influencerWrap').style.display = (opt.value==='A') ? '' : 'none';
+      }
+
+      // ربط الأحداث
+      opt.addEventListener('change', calc);
+      inf.addEventListener('input', calc);
+      vat.addEventListener('input', calc);
+      logoInput.addEventListener('change', ()=>{ logoImg.src = logoInput.value; logoImg.style.display=''; });
+      // تهيئة أولية
+      calc();
+    })();
+
+    // ✅ Add-ons/cart calculator + WhatsApp share (+ exposing small test API)
+    (function(){
+      const addonsTbl = document.getElementById('addonsBody');
+      if(!addonsTbl) return;
+      const fmt = (n)=> new Intl.NumberFormat('ar-EG',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n) + ' OMR';
+      const vInput = document.getElementById('vat');
+      const opt = document.getElementById('optSelect');
+      const infA = document.getElementById('influencers');
+      const addSubtotalEl = document.getElementById('addSubtotal');
+      const addVatEl = document.getElementById('addVat');
+      const grandEl = document.getElementById('grandTotal');
+      const waBtn = document.getElementById('btnWA');
+      const btnWAA = document.getElementById('btnWAA');
+      const btnWAB = document.getElementById('btnWAB');
+
+      function getBase(mode){
+        const v = Math.max(0, parseFloat(vInput.value||'5'))/100;
+        if((mode||opt.value)==='A'){
+          const influencers = Math.max(0, parseInt(infA.value||'0',10));
+          const subtotal = 800 + influencers*100; // قبل الضريبة
+          const tax = subtotal * v;
+          const total = subtotal + tax;
+          return {mode:'A', influencers, subtotal, tax, total, vatRate:v};
+        }
+        // B شامل الضريبة 1000 ثابت
+        const total = 1000;
+        const subtotal = total/(1+v);
+        const tax = total - subtotal;
+        return {mode:'B', influencers:0, subtotal, tax, total, vatRate:v};
+      }
+
+      function getAddons(){
+        let addSubtotal = 0; const picked = [];
+        addonsTbl.querySelectorAll('tr').forEach(row=>{
+          const chk = row.querySelector('.addon-check');
+          const qtyInput = row.querySelector('.addon-qty');
+          const price = parseFloat(row.querySelector('[data-price]').textContent)||0;
+          if(chk.checked){
+            const qty = Math.max(1, parseInt(qtyInput.value||'1',10));
+            const sum = price*qty; addSubtotal += sum;
+            const name = row.querySelector('label').textContent.trim();
+            picked.push(`${name} × ${qty} = ${fmt(sum)}`);
+          }
+        });
+        return {addSubtotal, picked};
+      }
+
+      function composeWhatsAppMessage(mode){
+        const base = getBase(mode);
+        const {addSubtotal, picked} = getAddons();
+        const addVat = addSubtotal * base.vatRate;
+        const grand = base.total + addSubtotal + addVat;
+        const weekly = `\n\nالبنود الأسبوعية الثابتة:\n- كل أسبوع: 3 فيديو (طرود / مول/مترو/شِفت بالتناوب / UX)\n- 2 بوست ثابت (1:1 أو 4:5)\n- 5 ستوري تغطي المحاور\n- شهرياً: 12 فيديو + 8 بوست + 20 ستوري\n- المحاور: طرود، مول عمان، مترو عمان، UX، تسليم شِفت`;
+        const msg = [
+          `عرض Moment+ ⇄ تسليم تاكسي`,
+          `الخيار: ${base.mode==='A' ? 'A — 800 OMR' : 'B — 1000 OMR (شامل)'}`,
+          base.mode==='A' ? `عدد المؤثرين (100 OMR لكل مؤثر): ${base.influencers}` : null,
+          `VAT: ${(base.vatRate*100).toFixed(1)}%`,
+          `إجمالي الأساس: قبل الضريبة ${fmt(base.subtotal)} | ضريبة ${fmt(base.tax)} | الإجمالي ${fmt(base.total)}`,
+          picked.length ? `\nالإضافات:\n- ${picked.join('\n- ')}` : `لا توجد إضافات`,
+          `\nالإجمالي الكلي المستحق: ${fmt(grand)}`,
+          weekly
+        ].filter(Boolean).join('\n');
+        return {msg, grand};
+      }
+
+      function recalc(){
+        const base = getBase();
+        const {addSubtotal} = getAddons();
+        const addVat = addSubtotal * base.vatRate;
+        const grand = base.total + addSubtotal + addVat;
+        addSubtotalEl.textContent = fmt(addSubtotal);
+        addVatEl.textContent = fmt(addVat);
+        grandEl.textContent = fmt(grand);
+        const {msg} = composeWhatsAppMessage();
+        waBtn.href = `https://wa.me/96898567383?text=${encodeURIComponent(msg)}`;
+      }
+
+      // أزرار واتساب السريعة لاختيار A/B
+      btnWAA.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const {msg} = composeWhatsAppMessage('A');
+        window.open(`https://wa.me/96898567383?text=${encodeURIComponent(msg)}`,'_blank');
+      });
+      btnWAB.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const {msg} = composeWhatsAppMessage('B');
+        window.open(`https://wa.me/96898567383?text=${encodeURIComponent(msg)}`,'_blank');
+      });
+
+      // أربط الأحداث العامة
+      document.getElementById('addonsBody').addEventListener('change', (e)=>{
+        if(e.target.classList.contains('addon-check')){
+          const key = e.target.dataset.key;
+          const qty = document.querySelector(`.addon-qty[data-key="${key}"]`);
+          qty.disabled = !e.target.checked; if(e.target.checked && !qty.value) qty.value = 1;
+        }
+        if(e.target.classList.contains('addon-check')||e.target.classList.contains('addon-qty')) recalc();
+      });
+      vInput.addEventListener('input', recalc);
+      document.getElementById('optSelect').addEventListener('change', recalc);
+      document.getElementById('influencers').addEventListener('input', recalc);
+
+      // 🔎 expose tiny test API
+      window.__quoteTestAPI = {
+        setMode:(m)=>{document.getElementById('optSelect').value=m;},
+        setVAT:(x)=>{document.getElementById('vat').value=x;},
+        setInfluencers:(n)=>{document.getElementById('influencers').value=n;},
+        getBase:getBase,
+        compose:(m)=>composeWhatsAppMessage(m),
+        recalc:recalc
+      };
+
+      // 🧪 Minimal tests (will log to console)
+      (function runTests(){
+        const tests=[];
+        // Test A: VAT 5%, 2 influencers → subtotal=1000, tax=50, total=1050
+        window.__quoteTestAPI.setMode('A'); window.__quoteTestAPI.setVAT(5); window.__quoteTestAPI.setInfluencers(2);
+        const a = getBase('A'); tests.push({name:'A: 2 influencers @5% VAT', pass: Math.abs(a.subtotal-1000)<1e-6 && Math.abs(a.tax-50)<1e-6 && Math.abs(a.total-1050)<1e-6});
+        // Test B: VAT 5% → total=1000 constant
+        window.__quoteTestAPI.setMode('B'); window.__quoteTestAPI.setVAT(5);
+        const b = getBase('B'); tests.push({name:'B: total is 1000 (VAT inclusive)', pass: Math.abs(b.total-1000)<1e-6});
+        // Log
+        console.group('%cQuote Page Tests','color:#fff;background:#ff6b35;padding:2px 6px;border-radius:6px');
+        tests.forEach(t=> console[t.pass?'log':'error'](`${t.pass?'✅':'❌'} ${t.name}`));
+        console.groupEnd();
+      })();
+
+      // init
+      recalc();
+    })();
+  </script>
+</body>
+</html>
