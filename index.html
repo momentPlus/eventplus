@@ -7,12 +7,14 @@
   <script src="/_sdk/element_sdk.js"></script>
   <script src="/_sdk/data_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+
   <style>
         body {
             box-sizing: border-box;
         }
         
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
         
         * {
             font-family: 'Tajawal', sans-serif;
@@ -1591,7 +1593,8 @@
             // حساب المسافة الإضافية (خارج مسقط)
             const distanceKm = parseInt(document.getElementById('distance-km')?.value || 0);
             const extraKm = Math.max(0, distanceKm - 30);
-            const extraDistanceFee = extraKm * 0.150;
+            const extraDistanceFee = extraKm * 0.25; // يمكن لاحقًا جعله 0.25–0.35 حسب سياسة المسافة
+
             
             return {
                 originalSubtotal: subtotal,
@@ -1974,6 +1977,9 @@
             return true;
         }
 
+function safeVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+
+
         async function submitViaEmail() {
             if (!validateForm()) return;
             
@@ -1993,9 +1999,9 @@
                 formData.append('customer_email', document.getElementById('customer-email').value);
                 formData.append('customer_phone', document.getElementById('customer-phone').value);
                 formData.append('event_type', document.getElementById('event-type').value);
-                formData.append('event_date', document.getElementById('event-date').value);
+                formData.append('event_date', safeVal('event-date'));
                 formData.append('event_location', document.getElementById('event-location').value);
-                formData.append('event_environment', document.getElementById('event-environment').value);
+                formData.append('event_environment', safeVal('event-environment'));
                 formData.append('inside_muscat', document.querySelector('input[name="inside-muscat"]:checked')?.value || '');
                 formData.append('distance_km', document.getElementById('distance-km').value);
                 formData.append('electricity_available', document.querySelector('input[name="electricity"]:checked')?.value || '');
@@ -2064,7 +2070,8 @@
                 event_type: document.getElementById('event-type').value || '',
                 event_location: document.getElementById('event-location').value || '',
                 inside_muscat: document.querySelector('input[name="inside-muscat"]:checked')?.value || '',
-                electricity_available: document.querySelector('input[name="electricity"]:checked"]')?.value || '',
+                electricity_available: document.querySelector('input[name="electricity"]:checked')?.value || '',
+
                 distance_km: document.getElementById('distance-km').value || '0',
                 selected_devices: JSON.stringify(selectedDevices),
                 selected_addons: JSON.stringify(selectedAddons),
@@ -3121,7 +3128,36 @@
             document.getElementById('whatsapp-submit-btn').addEventListener('click', submitViaWhatsApp);
         });
 
-        initializeApp();
+        document.addEventListener('DOMContentLoaded', () => {
+  // استدعاء تهيئة الـ SDK
+  initializeApp().catch(console.error);
+
+  // ربط أزرار الإرسال
+  const emailBtn = document.getElementById('email-submit-btn');
+  const waBtn = document.getElementById('whatsapp-submit-btn');
+  if (emailBtn) emailBtn.addEventListener('click', submitViaEmail);
+  if (waBtn) waBtn.addEventListener('click', submitViaWhatsApp);
+
+  // ضبط روابط واتساب/إيميل افتراضيًا حتى لو الـ SDK غير موجود
+  const whatsappNum = (defaultConfig.whatsapp_number || '').replace(/[^0-9]/g,'');
+  const email = defaultConfig.email_address || '';
+  const waURL = `https://wa.me/${whatsappNum}`;
+
+  const waHero = document.getElementById('whatsapp-hero-btn');
+  const waContact = document.getElementById('whatsapp-contact-btn');
+  const emailContact = document.getElementById('email-contact-btn');
+  const waDisplay = document.getElementById('whatsapp-display');
+  const emailDisplay = document.getElementById('email-display');
+
+  if (waHero) waHero.href = waURL;
+  if (waContact) waContact.href = waURL;
+  if (emailContact) emailContact.href = `mailto:${email}`;
+  if (waDisplay) waDisplay.textContent = defaultConfig.whatsapp_number;
+  if (emailDisplay) emailDisplay.textContent = email;
+});
+
+
+
     </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99ad64b286c0d1e0',t:'MTc2MjUyNDQwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
