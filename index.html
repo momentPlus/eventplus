@@ -2,8 +2,7 @@
 <html lang="ar" dir="rtl">
  <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1280, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EventPlus - حلول العرض والتفاعل</title>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="/_sdk/data_sdk.js"></script>
@@ -38,7 +37,11 @@
             padding: 4rem 1.5rem;
         }
         
-      
+        @media (max-width: 768px) {
+            .section-padding {
+                padding: 2.5rem 1rem;
+            }
+        }
         
         .smooth-scroll {
             scroll-behavior: smooth;
@@ -151,8 +154,7 @@
   <section class="gradient-bg text-white section-padding">
    <div class="max-w-6xl mx-auto"><!-- Slideshow -->
     <div class="relative mb-12 rounded-3xl overflow-hidden shadow-2xl">
-     <div class="slideshow-container relative h-[500px]"
-><!-- Slide 1 -->
+     <div class="slideshow-container relative h-96 md:h-[500px]"><!-- Slide 1 -->
       <div class="slide active bg-gradient-to-br from-blue-600 to-purple-700 h-full flex items-center justify-center text-white relative">
        <div class="absolute inset-0 bg-black/20"></div>
        <div class="text-center z-10">
@@ -198,8 +200,8 @@
      </div>
     </div>
     <div class="text-center">
-     <h2 class="text-6xl font-black mb-6 leading-tight" id="hero-title">EventPlus — حلول العرض والتفاعل للهولوجرام والشاشات الذكية</h2>
-     <p class=text-2xl mb-10 opacity-95 leading-relaxed" id="hero-subtitle">نحوّل التقنية إلى <span class="font-bold">تجربة إنسانية</span> تُقنع جمهوركم وتُنتج بيانات قابلة للقرار</p>
+     <h2 class="text-4xl md:text-6xl font-black mb-6 leading-tight" id="hero-title">EventPlus — حلول العرض والتفاعل للهولوجرام والشاشات الذكية</h2>
+     <p class="text-xl md:text-2xl mb-10 opacity-95 leading-relaxed" id="hero-subtitle">نحوّل التقنية إلى <span class="font-bold">تجربة إنسانية</span> تُقنع جمهوركم وتُنتج بيانات قابلة للقرار</p>
      <div class="flex flex-wrap justify-center gap-4"><button onclick="scrollToSection('booking')" class="bg-white text-purple-900 px-8 py-4 rounded-full text-lg font-bold hover:bg-gray-50 transition-all shadow-lg"> احجز الآن 🚀 </button> <button onclick="scrollToSection('catalog')" class="bg-pink-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-pink-700 transition-all"> كتالوج الشاشات 📱 </button> <a href="#" id="whatsapp-hero-btn" class="bg-teal-500 text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-teal-600 transition-all inline-flex items-center gap-2"> واتساب 💬 </a>
      </div>
      <div class="mt-12 bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-3xl mx-auto">
@@ -239,7 +241,7 @@
   <section id="catalog" class="section-padding bg-white">
    <div class="max-w-7xl mx-auto">
     <div class="text-center mb-16">
-     <h2 class="text-5xl font-black mb-4">كتالوج الشاشات 📱</h2>
+     <h2 class="text-4xl md:text-5xl font-black mb-4">كتالوج الشاشات 📱</h2>
      <p class="text-xl text-gray-600">اختر الجهاز المناسب لفعاليتك</p>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8" id="devices-container"><!-- Device 1 -->
@@ -3157,35 +3159,5 @@ function safeVal(id){ const el = document.getElementById(id); return el ? el.val
 
 
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99ad64b286c0d1e0',t:'MTc2MjUyNDQwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>
-  // شغّل الـ SDKs واربط الأزرار والفورم بعد ما الصفحة تجهز
-  document.addEventListener('DOMContentLoaded', () => {
-    // يفعّل elementSdk + dataSdk ويحدث العناوين/الألوان
-    if (typeof initializeApp === 'function') initializeApp();
-
-    // ربط أزرار الإرسال
-    const emailBtn = document.getElementById('email-submit-btn');
-    const waBtn    = document.getElementById('whatsapp-submit-btn');
-    if (emailBtn) emailBtn.addEventListener('click', submitViaEmail);
-    if (waBtn)    waBtn.addEventListener('click', submitViaWhatsApp);
-
-    // ربط تغييرات الإضافات
-    document.querySelectorAll('.addon-checkbox')
-      .forEach(cb => cb.addEventListener('change', updateAddonSelection));
-
-    // ربط تغييرات الأجهزة/الكمية/الأيام (لو أضفت جهاز من المربعات فوق أو من القسم السفلي)
-    document.querySelectorAll('.device-checkbox')
-      .forEach(cb => cb.addEventListener('change', () => updateDeviceSelection()));
-
-    document.querySelectorAll('.device-quantity, .device-days')
-      .forEach(inp => inp.addEventListener('input', () => updateDeviceSelection()));
-
-    // مبدئيًا حدّث الملخّص
-    updateBookingSummary?.();
-  });
-</script>
-
-
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99ad64b286c0d1e0',t:'MTc2MjUyNDQwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
