@@ -3032,27 +3032,25 @@ const finalSubtotal = subtotalAfterDiscounts - discountCodeAmount;
             }
         }
 
-        // (مصحح) ربط الأحداث الرئيسية
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // ربط الإضافات
-            document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', updateAddonSelection);
-            });
-            
-            // (جديد ومهم) ربط حقول الأجهزة بالتحديث الفوري
-            document.querySelectorAll('.device-checkbox, .device-quantity, .device-days').forEach(element => {
-                element.addEventListener('change', function() {
-                    updateDeviceSelection(); 
-                });
-            });
+// (مصحح) ربط الأحداث الرئيسية
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ربط الإضافات
+    document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateAddonSelection);
+    });
+    
+    // (جديد ومهم) ربط حقول الأجهزة بالتحديث الفوري
+    // هذا هو المكان الصحيح للكود الذي أرسلته
+    document.querySelectorAll('.device-checkbox, .device-quantity, .device-days').forEach(element => {
+        element.addEventListener('change', function() {
+            updateDeviceSelection(); 
+        });
+    });
 
-            // (جديد) ربط زر تطبيق الخصم بالدالة
-            const applyDiscountBtn = document.querySelector('button[onclick="applyDiscount()"]');
-            if(applyDiscountBtn) {
-                applyDiscountBtn.addEventListener('click', applyDiscount);
-            }
-            
+    // (جديد) ربط زر تطبيق الخصم بالدالة
+    const applyDiscountBtn = document.querySelector('button[onclick="applyDiscount()"]');
+// ... بقية الكود ...
             // ربط أزرار الإرسال
             const emailBtn = document.getElementById('email-submit-btn');
             const waBtn = document.getElementById('whatsapp-submit-btn');
