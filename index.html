@@ -11,21 +11,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
+        /* --- التعديلات الجديدة تبدأ هنا --- */
+        
+        /* 1. خلفية الصفحة بتدرج بنفسجي ثابت */
+        body {
+            box-sizing: border-box;
+            background: linear-gradient(to right, #6A0DAD, #9370DB) !important;
+            background-attachment: fixed !important; /* تثبيت الخلفية */
+            min-height: 100vh;
+        }
+
+        /* 2. تعديل الكلاس الخاص بشريط التنقل والعناوين ليتطابق مع الخلفية */
+        .gradient-bg {
+            background: linear-gradient(to right, #6A0DAD, #9370DB) !important;
+        }
+
+        /* 3. جعل خلفيات الأقسام شبه شفافة لإظهار لون الخلفية الجديد */
+        .bg-white, .bg-gray-50, section {
+            background-color: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* استثناءات: لا نطبق الشفافية البيضاء على العناصر التي يجب أن تكون ملونة */
+        .gradient-bg, footer, .badge { 
+    background-color: transparent !important;
+}
+        
+        footer {
+            background-color: #111827 !important; /* إبقاء الفوتر غامق */
+        }
+
+        /* --- نهاية التعديلات الجديدة --- */
+
         #discount-row {
             display: none !important;
         }
         
-        body {
-            box-sizing: border-box;
-            background-color: #F5F5F7;
-        }
-        
         * {
             font-family: 'Tajawal', sans-serif;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #41296D 0%, #EC2B84 100%);
         }
         
         .card-hover {
@@ -206,24 +229,21 @@
         img {
             touch-action: manipulation;
         }
+		
     </style>
 </head>
- <body class="smooth-scroll bg-gray-50"><nav class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-3">
-                    <div class="text-3xl">
-                        🎯
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold" id="nav-title">EventPlus</h1>
-                        <p class="text-xs opacity-90">حلول العرض الذكية</p>
-                    </div>
-                </div>
-                </div>
-        </div>
-    </nav>
-  <section class="gradient-bg text-white section-padding">
+<body class="smooth-scroll"><nav class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-1">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">
+                        <img src="logo.png" class="h-56" alt="شعار EventPlus">
+                    </div>
+                </div>
+                </div>
+        </div>
+    </nav>
+    <section class="gradient-bg text-white section-padding">
    <div class="max-w-6xl mx-auto">
     
    
@@ -1062,14 +1082,15 @@
             </div>
         </div>
     </section>
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-6xl mx-auto px-4 text-center">
-            <div class="text-3xl mb-4"> 🎯 </div>
-            <h3 class="text-2xl font-bold mb-2">EventPlus</h3>
-            <p class="text-gray-400 mb-6">حلول العرض والتفاعل الذكية</p>
-            <p class="text-sm text-gray-500">© 2024 EventPlus. جميع الحقوق محفوظة.</p>
-        </div>
-    </footer>
+   <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+        
+        <img src="logo.png" alt="EventPlus Logo" class="h-56 mx-auto mb-4">
+        
+        <p class="text-gray-400 mb-6">حلول العرض والتفاعل الذكية</p>
+        <p class="text-sm text-gray-500">© 2024 EventPlus. جميع الحقوق محفوظة.</p>
+    </div>
+</footer>
     <script>
         const defaultConfig = {
             hero_title: "EventPlus — حلول العرض والتفاعل للهولوجرام والشاشات الذكية",
