@@ -5,15 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Event Plus - تحدي المهرجان</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React & DOM -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -39,7 +36,6 @@
         }
         .animate-shake { animation: shake 0.3s ease-in-out; }
 
-        /* Modified slide animation to slide down from top for keyboard */
         @keyframes slideDown { 
             from { transform: translateY(-100%); opacity: 0; } 
             to { transform: translateY(0); opacity: 1; } 
@@ -61,7 +57,6 @@
         /* Game Specific Styles */
         .tap-zone { -webkit-tap-highlight-color: transparent; }
 
-        /* Custom Range Input Style */
         .volume-slider {
             -webkit-appearance: none;
             height: 4px;
@@ -79,7 +74,6 @@
             box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
         }
 
-        /* Fade Animation for Volume Slider */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
     </style>
@@ -88,7 +82,6 @@
 
     <div id="root" class="h-full w-full"></div>
 
-    <!-- Music Audio Element -->
     <audio id="bgAudio" loop>
         <source src="sound/1.mp3" type="audio/mpeg">
     </audio>
@@ -127,7 +120,7 @@
                 speedFactor: 1.0, 
                 color: 'text-green-400', 
                 border: 'border-green-400', 
-                sniperPoints: 1000,
+                mathRange: 10, // Max number for math
                 quizPoints: 1000 
             },
             MEDIUM: { 
@@ -138,7 +131,7 @@
                 speedFactor: 1.5, 
                 color: 'text-yellow-400', 
                 border: 'border-yellow-400', 
-                sniperPoints: 2000,
+                mathRange: 50,
                 quizPoints: 2000 
             },
             HARD: { 
@@ -149,15 +142,15 @@
                 speedFactor: 2.0, 
                 color: 'text-red-500', 
                 border: 'border-red-500', 
-                sniperPoints: 3000,
+                mathRange: 99,
                 quizPoints: 3000 
             }
         };
 
-        // --- GAMES LIST ---
+        // --- GAMES LIST (UPDATED: Removed Sniper, Added Math) ---
         const GAMES_LIST = [
             { id: 'REFLEX', name: 'رد الفعل', icon: 'MousePointer2', desc: 'تجنب القنابل!', color: 'from-red-500 to-rose-700', hasLives: true },
-            { id: 'SNIPER', name: 'القناص', icon: 'Crosshair', desc: 'أوقف الوقت', color: 'from-lime-500 to-green-700' },
+            { id: 'MATH', name: 'تحدي الحساب', icon: 'Calculator', desc: 'اجمع واطرح بسرعة', color: 'from-cyan-500 to-blue-700', hasLives: true },
             { id: 'COLOR', name: 'خداع الألوان', icon: 'Palette', desc: 'كلمة أم لون؟', color: 'from-pink-500 to-fuchsia-700', hasLives: true },
             { id: 'QUIZ', name: 'ثقافة عمان', icon: 'Brain', desc: 'أسئلة عامة', color: 'from-blue-600 to-indigo-800', hasLives: true },
         ];
@@ -357,14 +350,12 @@
             );
         };
 
-        // --- MUSIC PLAYER COMPONENT (Updated with Conditional Visibility) ---
         const MusicPlayer = ({ isInGame }) => {
             const [isPlaying, setIsPlaying] = useState(false);
             const [volume, setVolume] = useState(0.5);
             const [showSlider, setShowSlider] = useState(false);
             const audioRef = useRef(null);
 
-            // Effect to hide slider automatically when game starts
             useEffect(() => {
                 if (isInGame) {
                     setShowSlider(false);
@@ -376,21 +367,17 @@
                 if (audioRef.current) {
                     audioRef.current.volume = volume;
                 }
-                
-                // Auto-play attempt
                 const playPromise = audioRef.current.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         setIsPlaying(true);
                     }).catch(error => {
-                        console.log("Auto-play prevented");
                         setIsPlaying(false);
                     });
                 }
             }, []);
 
             const handleMusicButtonClick = () => {
-                // Toggle Play/Pause
                 if (audioRef.current.paused) {
                     audioRef.current.play();
                     setIsPlaying(true);
@@ -398,7 +385,6 @@
                     audioRef.current.pause();
                     setIsPlaying(false);
                 }
-                // Toggle Slider visibility when button is pressed
                 setShowSlider(!showSlider);
             };
 
@@ -420,7 +406,6 @@
                         <span className="text-xs font-bold hidden sm:inline">{isPlaying ? "تشغيل" : "إيقاف"}</span>
                     </button>
                     
-                    {/* Volume Slider: Visible only if showSlider is true and typically hidden at game start */}
                     {showSlider && (
                         <div className="bg-black/60 backdrop-blur-sm border border-white/10 p-2 rounded-xl flex items-center gap-2 animate-fade-in">
                             <Icon name="Volume1" size={14} className="text-white/60" />
@@ -439,7 +424,6 @@
             );
         };
 
-        // --- FOOTER COMPONENT (Updated: Removed clickable links) ---
         const Footer = () => (
             <div className="fixed bottom-0 left-0 w-full z-40 bg-slate-900/90 backdrop-blur-md border-t border-white/10 p-3 flex flex-wrap justify-center items-center gap-4 text-xs sm:text-sm shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                  <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
@@ -530,6 +514,100 @@
 
         // --- SUB-GAMES IMPLEMENTATIONS ---
         
+        // --- NEW: MATH GAME ---
+        const GameMath = ({ diff, onScore, onEnd, onLifeLost }) => {
+            const [problem, setProblem] = useState(null);
+            const [timeLeft, setTimeLeft] = useState(20 * diff.timeFactor);
+            const [streak, setStreak] = useState(0);
+
+            const generateProblem = useCallback(() => {
+                const range = diff.mathRange;
+                const isAddition = Math.random() > 0.5;
+                let n1 = Math.floor(Math.random() * range) + 1;
+                let n2 = Math.floor(Math.random() * range) + 1;
+                
+                // Ensure no negative results for simplicity
+                if (!isAddition && n1 < n2) [n1, n2] = [n2, n1];
+
+                const ans = isAddition ? n1 + n2 : n1 - n2;
+                
+                // Generate wrong answers
+                let wrong1 = ans + Math.floor(Math.random() * 5) + 1;
+                let wrong2 = ans - Math.floor(Math.random() * 5) - 1;
+                if (wrong2 < 0) wrong2 = ans + 2; 
+
+                // Ensure uniqueness
+                const options = shuffleArray([ans, wrong1, wrong2]);
+
+                setProblem({ n1, n2, op: isAddition ? '+' : '-', ans, options });
+            }, [diff]);
+
+            useEffect(() => {
+                generateProblem();
+                const timer = setInterval(() => {
+                    setTimeLeft(t => {
+                        if(t <= 0) { clearInterval(timer); onEnd(); return 0; }
+                        return t - 0.1;
+                    });
+                }, 100);
+                return () => clearInterval(timer);
+            }, [generateProblem]);
+
+            const handleAnswer = (val) => {
+                if (val === problem.ans) {
+                    let pointsToAdd = 50;
+                    const newStreak = streak + 1;
+                    
+                    if (newStreak >= 3) {
+                         pointsToAdd = Math.floor(pointsToAdd * 1.5); 
+                         playSound('bonus');
+                    } else {
+                        playSound('correct');
+                    }
+                    
+                    onScore(pointsToAdd);
+                    setStreak(newStreak);
+                    generateProblem();
+                    setTimeLeft(20 * diff.timeFactor);
+                } else {
+                    playSound('wrong');
+                    onLifeLost();
+                    setStreak(0);
+                    generateProblem();
+                }
+            };
+
+            if (!problem) return null;
+
+            return (
+                <div className="flex flex-col items-center justify-center h-full gap-8">
+                     <div className="flex justify-between w-full px-8">
+                        <div className="text-xl text-white/70">احسب بسرعة!</div>
+                        <div className="flex gap-4">
+                            {streak > 2 && <div className="text-green-400 font-bold animate-pulse">🔥 x1.5</div>}
+                            <div className="text-xl font-mono text-yellow-400">{Math.ceil(timeLeft)}ث</div>
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-7xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                        <span>{problem.n1}</span>
+                        <span className="text-purple-400">{problem.op}</span>
+                        <span>{problem.n2}</span>
+                        <span className="text-white/50">=</span>
+                        <span className="text-yellow-400">?</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 w-full px-4 mt-8">
+                        {problem.options.map((opt, i) => (
+                            <Button key={i} onClick={() => handleAnswer(opt)} variant="neutral" className="text-3xl h-24">
+                                {opt}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
         const GameQuiz = ({ diff, onScore, onEnd, onLifeLost }) => {
             const [questions, setQuestions] = useState([]);
             const [qIdx, setQIdx] = useState(0);
@@ -785,94 +863,6 @@
             );
         };
 
-        const GameSniper = ({ diff, onScore, onEnd }) => {
-            const [running, setRunning] = useState(true);
-            const [now, setNow] = useState(0);
-            const [target, setTarget] = useState(5.000);
-            const tolerance = 10.0; 
-            
-            useEffect(() => {
-                let min, max;
-                if (diff.id === 'EASY') {
-                    min = 1; max = 5;
-                } else if (diff.id === 'MEDIUM') {
-                    min = 3; max = 8;
-                } else { 
-                    min = 5; max = 13;
-                }
-                const newTarget = Math.floor(Math.random() * (max - min + 1)) + min;
-                setTarget(newTarget);
-            }, [diff.id]);
-
-            useEffect(() => {
-                let start = Date.now();
-                
-                let tickRate = 17;
-                if (diff.id === 'HARD') {
-                    tickRate = 5; 
-                } else if (diff.id === 'MEDIUM') {
-                    tickRate = 12; 
-                } else {
-                    tickRate = 20; 
-                }
-                
-                const int = setInterval(() => { 
-                    if(running) {
-                        const delta = (Date.now() - start) / 1000;
-                        let speedMultiplier = 1.0;
-                        if (diff.id === 'HARD') speedMultiplier = 2.5; 
-                        else if (diff.id === 'MEDIUM') speedMultiplier = 1.5; 
-                        setNow(delta * speedMultiplier);
-                    }
-                }, tickRate);
-                
-                return () => clearInterval(int);
-            }, [running, diff.id]);
-
-            const stop = () => {
-                if(!running) return;
-                setRunning(false);
-                const diffVal = Math.abs(now - target);
-                
-                let percentage = 0;
-                
-                if (diffVal <= 0.05) {
-                    percentage = 1.0; 
-                    playSound('win');
-                } else if (diffVal <= 0.2) {
-                    percentage = 0.8; 
-                    playSound('win');
-                } else if (diffVal <= 0.5) {
-                    percentage = 0.5; 
-                    playSound('win');
-                } else if (diffVal <= 1.0) {
-                    percentage = 0.1; 
-                    playSound('wrong'); 
-                } else {
-                    percentage = 0.0;
-                    playSound('wrong');
-                }
-                
-                const finalPoints = Math.floor(diff.sniperPoints * percentage);
-                
-                onScore(finalPoints);
-                setTimeout(onEnd, 2500);
-            };
-
-            return (
-                <div className="flex flex-col items-center justify-center h-full gap-8">
-                    <div className="text-xl text-indigo-300">الهدف: {target.toFixed(3)}</div>
-                    <div className={`text-7xl font-mono font-bold tabular-nums text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] ${diff.id === 'HARD' ? 'text-red-500 animate-pulse' : ''}`}>
-                        {now.toFixed(3)}
-                    </div>
-                    <Button onClick={stop} disabled={!running} className="w-full py-8 text-2xl animate-pulse bg-red-600 border-red-800 hover:bg-red-500">
-                        أطلق النار!
-                    </Button>
-                    {diff.id === 'HARD' && <div className="text-xs text-red-400 font-bold">تحذير: العداد سريع جداً!</div>}
-                </div>
-            );
-        };
-
         // --- MAIN ENGINE ---
         const GameEngine = ({ gameId, difficulty, onExit, onAutoSave, onViewLeaderboard, onHome }) => {
             const [score, setScore] = useState(0);
@@ -881,13 +871,9 @@
             const config = DIFFICULTY_CONFIG[difficulty];
             const gameData = GAMES_LIST.find(g => g.id === gameId);
 
-            // New Effect: Handles Auto-Save and Sound when game is over
             useEffect(() => {
                 if (isOver) {
-                    // 1. Auto Save Score
                     onAutoSave(score);
-                    
-                    // 2. Play Result Sound immediately
                     playSound('win'); 
                 }
             }, [isOver]);
@@ -959,7 +945,7 @@
                         {gameId === 'QUIZ' && <GameQuiz {...props} />}
                         {gameId === 'REFLEX' && <GameReflex {...props} />}
                         {gameId === 'COLOR' && <GameColor {...props} />}
-                        {gameId === 'SNIPER' && <GameSniper {...props} />}
+                        {gameId === 'MATH' && <GameMath {...props} />}
                     </div>
                 </div>
             );
@@ -1041,6 +1027,43 @@
             const [diff, setDiff] = useState('MEDIUM');
             const [showKeyboard, setShowKeyboard] = useState(false);
             const [activeGame, setActiveGame] = useState(null);
+            
+            // --- FULLSCREEN LOGIC ---
+            const [tapCount, setTapCount] = useState(0);
+            const tapTimeoutRef = useRef(null);
+
+            const handleSecretTap = () => {
+                setTapCount(prev => prev + 1);
+                
+                // Clear existing timeout
+                if (tapTimeoutRef.current) clearTimeout(tapTimeoutRef.current);
+                
+                // Reset count if no tap for 2 seconds
+                tapTimeoutRef.current = setTimeout(() => {
+                    setTapCount(0);
+                }, 2000);
+            };
+
+            useEffect(() => {
+                if (tapCount === 5) {
+                    // Try to enter fullscreen
+                    const elem = document.documentElement;
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen().catch(err => console.log(err));
+                    } else if (elem.webkitRequestFullscreen) { /* Safari */
+                        elem.webkitRequestFullscreen();
+                    }
+                } else if (tapCount === 9) {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen().catch(err => console.log(err));
+                    } else if (document.webkitExitFullscreen) { /* Safari */
+                        document.webkitExitFullscreen();
+                    }
+                    setTapCount(0); // Reset after exit
+                }
+            }, [tapCount]);
+            // ------------------------
 
             const saveDataInternal = (finalScore) => {
                 const sessionId = Date.now().toString();
@@ -1089,6 +1112,14 @@
 
             return (
                 <div className="h-full relative">
+                    {/* HIDDEN SECRET BUTTON FOR FULLSCREEN (Top Right Corner) */}
+                    <div 
+                        onClick={handleSecretTap}
+                        className="fixed top-0 right-0 w-16 h-16 z-[100] cursor-default"
+                        style={{ backgroundColor: 'transparent' }} 
+                        aria-hidden="true"
+                    ></div>
+
                     {/* Pass state to MusicPlayer to control auto-hide */}
                     <MusicPlayer isInGame={screen === 'GAME'} />
                     
