@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Event Plus - تحدي المهرجان</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & DOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+        body { 
+            touch-action: none; 
+            overflow: hidden; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            font-family: 'Tajawal', sans-serif;
+            background-color: #000;
+        }
+        
+        /* Animations & Effects */
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake { animation: shake 0.3s ease-in-out; }
+
+        /* Modified slide animation to slide down from top for keyboard */
+        @keyframes slideDown { 
+            from { transform: translateY(-100%); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+        .animate-slideDown { animation: slideDown 0.3s ease-out forwards; }
+
+        .crt-scanline {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 50;
+            position: absolute;
+            inset: 0;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Game Specific Styles */
+        .tap-zone { -webkit-tap-highlight-color: transparent; }
+
+        /* Custom Range Input Style */
+        .volume-slider {
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #a855f7;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Fade Animation for Volume Slider */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-black text-white h-screen w-screen overflow-hidden">
+
+    <div id="root" class="h-full w-full"></div>
+
+    <!-- Music Audio Element -->
+    <audio id="bgAudio" loop>
+        <source src="sound/1.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        // --- ICONS WRAPPER ---
+        const Icon = ({ name, size = 24, className, ...props }) => {
+            if (!window.lucide || !window.lucide.icons) return null;
+            const iconData = window.lucide.icons[name];
+            if (!iconData) return null;
+            
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                    {iconData.map((child, idx) => React.createElement(child[0], { key: idx, ...child[1] }))}
+                </svg>
+            );
+        };
+
+        // --- CONFIGURATION ---
+        const THEME = {
+            bg: "bg-slate-900",
+            gradient: "bg-gradient-to-br from-[#1a0b2e] via-[#2e1065] to-[#000000]",
+            primary: "bg-purple-600",
+            border: "border-purple-500/30",
+        };
+
+        // --- DIFFICULTY CONFIGURATION ---
+        const DIFFICULTY_CONFIG = {
+            EASY: { 
+                id: 'EASY', 
+                label: 'مبتدئ', 
+                multiplier: 1, 
+                timeFactor: 1.0, 
+                speedFactor: 1.0, 
+                color: 'text-green-400', 
+                border: 'border-green-400', 
+                sniperPoints: 1000,
+                quizPoints: 1000 
+            },
+            MEDIUM: { 
+                id: 'MEDIUM', 
+                label: 'محترف', 
+                multiplier: 1.5, 
+                timeFactor: 0.66, 
+                speedFactor: 1.5, 
+                color: 'text-yellow-400', 
+                border: 'border-yellow-400', 
+                sniperPoints: 2000,
+                quizPoints: 2000 
+            },
+            HARD: { 
+                id: 'HARD', 
+                label: 'أسطوري', 
+                multiplier: 2, 
+                timeFactor: 0.5, 
+                speedFactor: 2.0, 
+                color: 'text-red-500', 
+                border: 'border-red-500', 
+                sniperPoints: 3000,
+                quizPoints: 3000 
+            }
+        };
+
+        // --- GAMES LIST ---
+        const GAMES_LIST = [
+            { id: 'REFLEX', name: 'رد الفعل', icon: 'MousePointer2', desc: 'تجنب القنابل!', color: 'from-red-500 to-rose-700', hasLives: true },
+            { id: 'SNIPER', name: 'القناص', icon: 'Crosshair', desc: 'أوقف الوقت', color: 'from-lime-500 to-green-700' },
+            { id: 'COLOR', name: 'خداع الألوان', icon: 'Palette', desc: 'كلمة أم لون؟', color: 'from-pink-500 to-fuchsia-700', hasLives: true },
+            { id: 'QUIZ', name: 'ثقافة عمان', icon: 'Brain', desc: 'أسئلة عامة', color: 'from-blue-600 to-indigo-800', hasLives: true },
+        ];
+
+        // --- QUESTIONS DATABASE ---
+        const QUESTIONS_DB = {
+            EASY: [
+                {q: "هيش هي عاصمة السلطنة؟", a: ["مسقط", "صلالة", "صحار"], c: "مسقط"},
+                {q: "ويش العملة اللي نستخدمها في عمان؟", a: ["الريال العماني", "الدينار", "الدرهم"], c: "الريال العماني"},
+                {q: "منهو السلطان الحالي الله يحفظه؟", a: ["هيثم بن طارق", "قابوس بن سعيد", "سعيد بن تيمور"], c: "هيثم بن طارق"},
+                {q: "الخنجر في العلم لونه هيش؟", a: ["أبيض", "أحمر", "أخضر"], c: "أبيض"},
+                {q: "متى نحتفل بالعيد الوطني؟", a: ["18 نوفمبر", "23 يوليو", "11 يناير"], c: "18 نوفمبر"},
+                {q: "هيش أشهر حلوى نقدمها للضيف؟", a: ["الحلوى العمانية", "البقلاوة", "الكنافة"], c: "الحلوى العمانية"},
+                {q: "وين يصير مهرجان الخريف؟", a: ["صلالة", "صور", "نزوى"], c: "صلالة"},
+                {q: "ويش الرمز الموجود في علمنا؟", a: ["الخنجر والسيفين", "النخلة", "الصقر"], c: "الخنجر والسيفين"},
+                {q: "الرجال عندنا هيش يلبسون؟", a: ["دشداشة", "ثوب", "جلابية"], c: "دشداشة"},
+                {q: "اللي ينحط على الراس في الرسميات هيش يسمونه؟", a: ["مصر", "غترة", "شماغ"], c: "مصر"},
+                {q: "والقبعة المطرزة هيش اسمها؟", a: ["كمة", "طاقية", "عمة"], c: "كمة"},
+                {q: "الحيوان اللي يعتبر رمز للمحميات عندنا؟", a: ["المها العربي", "النمر", "الفيل"], c: "المها العربي"},
+                {q: "شجرة اللبان وين تكثر؟", a: ["ظفار", "مسقط", "الباطنة"], c: "ظفار"},
+                {q: "أكبر مطار في عمان هيش اسمه؟", a: ["مطار مسقط", "مطار دبي", "مطار الدوحة"], c: "مطار مسقط"},
+                {q: "بحرنا من صوب الشرق هيش اسمه؟", a: ["بحر العرب", "البحر الأحمر", "المتوسط"], c: "بحر العرب"},
+                {q: "من جيرانا من صوب الغرب؟", a: ["الإمارات والسعودية", "الكويت", "العراق"], c: "الإمارات والسعودية"},
+                {q: "ديانتنا الرسمية هيش؟", a: ["الاسلام", "المسيحية", "الهندوسية"], c: "الاسلام"},
+                {q: "بأي لغة نتكلم في الدوائر الحكومية؟", a: ["العربية", "الإنجليزية", "الأردية"], c: "العربية"},
+                {q: "أكبر محافظة ف المساحة هيش هي؟", a: ["الوسطى", "مسقط", "مسندم"], c: "الوسطى"},
+                {q: "يوم النهضة 23 يوليو كان ف عهد منهو؟", a: ["السلطان قابوس", "السلطان هيثم", "السلطان سعيد"], c: "السلطان قابوس"},
+                {q: "الأكلة اللي ندفنها في الأرض أيام العيد هيش؟", a: ["الشواء", "المكبوس", "الهريس"], c: "الشواء"},
+                {q: "طيران بلادنا هيش اسمه؟", a: ["الطيران العماني", "طيران الخليج", "الإماراتية"], c: "الطيران العماني"},
+                {q: "كم لون في علم عمان غير الشعار؟", a: ["ثلاثة", "أربعة", "اثنين"], c: "ثلاثة"},
+                {q: "القهوة عندنا رمز لويش؟", a: ["الضيافة والكرم", "التجارة", "الزراعة"], c: "الضيافة والكرم"},
+                {q: "ميناء مسقط القديم هيش اسمه؟", a: ["ميناء مطرح", "صحار", "صلالة"], c: "ميناء مطرح"},
+                {q: "السوق الشعبي المعروف ف مسقط؟", a: ["سوق مطرح", "سوق المباركية", "واقف"], c: "سوق مطرح"},
+                {q: "سفننا القديمة هيش يسمونها؟", a: ["الداو", "اليخوت", "العبارات"], c: "الداو"},
+                {q: "يوم نسلم على حد هيش نقول؟", a: ["السلام عليكم", "مرحباً", "صباح الخير"], c: "السلام عليكم"},
+                {q: "الفاكهة اللي نزرعها وايد وتجي من النخل؟", a: ["الرطب/التمر", "فراولة", "أناناس"], c: "الرطب/التمر"},
+                {q: "السمكة الصغيرة اللي نجففها وتكثر عندنا؟", a: ["العومة", "سلمون", "قرش"], c: "العومة"}
+            ],
+            MEDIUM: [
+                {q: "الري مال الأولين هيش يسمونه؟", a: ["الأفلاج", "الآبار", "السدود"], c: "الأفلاج"},
+                {q: "أعلى جبل في عمان وين؟", a: ["جبل شمس", "الجبل الأخضر", "سمحان"], c: "جبل شمس"},
+                {q: "وين تقع القلعة الكبيرة المدورة (الشهباء)؟", a: ["نزوى", "صحار", "صور"], c: "نزوى"},
+                {q: "القلعة اللي سورها طويل ومسجلة ف اليونسكو؟", a: ["قلعة بهلاء", "نخل", "الحزم"], c: "قلعة بهلاء"},
+                {q: "المضيق اللي نطل عليه ويتحكم ف التجارة؟", a: ["مضيق هرمز", "باب المندب", "جبل طارق"], c: "مضيق هرمز"},
+                {q: "الولاية اللي يصنعون فيها سفن الخشب؟", a: ["صور", "قريات", "بركاء"], c: "صور"},
+                {q: "الوادي اللي مايه أخضر طول السنة ف الشرقية؟", a: ["وادي بني خالد", "وادي غول", "الجزي"], c: "وادي بني خالد"},
+                {q: "الجبل اللي يزرعون فيه رمان وورد? ", a: ["الجبل الأخضر", "شمس", "الكور"], c: "الجبل الأخضر"},
+                {q: "جزيرة السلاحف هيش اسمها؟", a: ["مصيرة", "الحلانيات", "الفحل"], c: "مصيرة"},
+                {q: "دار الأوبرا وين مكانها بالضبط؟", a: ["القرم", "مطرح", "الخوير"], c: "القرم"},
+                {q: "سد وادي ضيقة وين مكانه؟", a: ["قريات", "العامرات", "بدبد"], c: "قريات"},
+                {q: "أكبر كهف ف عمان (مجلس الجن) وين؟", a: ["هضبة سلماه/قريات", "نزوى", "عبري"], c: "هضبة سلماه/قريات"},
+                {q: "السفينة اللي راحت لين الصين هيش اسمها؟", a: ["سفينة صحار", "جوهرة مسقط", "مجان"], c: "سفينة صحار"},
+                {q: "المحافظة المفصوله عنا فوق صوب الشمال؟", a: ["مسندم", "البريمي", "الظاهرة"], c: "مسندم"},
+                {q: "الفن اللي يلعبون فيه بالسيف والعصا؟", a: ["الرزحة", "الميدان", "التغرود"], c: "الرزحة"},
+                {q: "عين حارة ف الرستاق هيش اسمها؟", a: ["عين الكسفة", "الثوارة", "أرزات"], c: "عين الكسفة"},
+                {q: "وعين حارة ف نخل؟", a: ["الثوارة", "الكسفة", "حمران"], c: "الثوارة"},
+                {q: "مدينتنا اللي كانوا يسمونها دهليز الصين؟", a: ["صحار", "مسقط", "قلهات"], c: "صحار"},
+                {q: "المنطقة الاقتصادية الجديدة فالوسطى؟", a: ["الدقم", "هيماء", "محوت"], c: "الدقم"},
+                {q: "القلاع اللي تحرس مسقط القديمة؟", a: ["الجلالي والميراني", "نزوى وبهلاء", "الحزم والرستاق"], c: "الجلالي والميراني"},
+                {q: "متحف مشهور ف مسقط القديمة؟", a: ["بيت الزبير", "الوطني", "الطفل"], c: "بيت الزبير"},
+                {q: "اسم ظفار الأولي هيش كان؟", a: ["الأحقاف", "مجان", "مزون"], c: "الأحقاف"},
+                {q: "خبزنا العماني الخفيف هيش نسميه؟", a: ["خبز رخال", "تنور", "شباتي"], c: "خبز رخال"},
+                {q: "سوق الغنم قبل العيد هيش نسميه؟", a: ["الهبطة", "الحراج", "المزاد"], c: "الهبطة"},
+                {q: "أول سفينة راحت أمريكا؟", a: ["سلطانة", "صحار", "الرحماني"], c: "سلطانة"},
+                {q: "جزر فيها شعاب مرجانية ف مسقط؟", a: ["الديمانيات", "الحلانيات", "مصيرة"], c: "الديمانيات"},
+                {q: "الوادي اللي لازم تركب قارب عشان تدخله ف طيوي؟", a: ["وادي شاب", "بني خروص", "الأبيض"], c: "وادي شاب"},
+                {q: "الصندوق الخشبي مال الملابس هيش نسميه؟", a: ["المندوس", "الصندوق", "السحارة"], c: "المندوس"},
+                {q: "وين يقع حصن الحزم؟", a: ["الرستاق", "المصنعة", "بركاء"], c: "الرستاق"},
+                {q: "وين يصلحون السفن الكبار (الحوض الجاف)؟", a: ["الدقم", "صحار", "صلالة"], c: "الدقم"}
+            ],
+            HARD: [
+                {q: "أي سنة طردنا البرتغاليين نهائياً؟", a: ["1650", "1507", "1741"], c: "1650"},
+                {q: "منهو مؤسس دولة البوسعيد؟", a: ["أحمد بن سعيد", "سلطان بن سيف", "سيف بن سلطان"], c: "أحمد بن سعيد"},
+                {q: "اسم عمان القديم (جبل النحاس) هيش هو؟", a: ["مجان", "مزون", "الغبيراء"], c: "مجان"},
+                {q: "ومعنى اسم (مزون) هيش؟", a: ["المياه الواجدة", "النحاس", "الجبل"], c: "المياه الواجدة"},
+                {q: "الملاح العماني الملقب بأسد البحار منهو؟", a: ["أحمد بن ماجد", "ناصر بن مرشد", "كعب بن زهير"], c: "أحمد بن ماجد"},
+                {q: "منهو الإمام اللي بنى قلعة نزوى؟", a: ["سلطان بن سيف", "ناصر بن مرشد", "بلعرب"], c: "سلطان بن سيف"},
+                {q: "وحصن جبرين الزين منهو بانيه؟", a: ["بلعرب بن سلطان", "سلطان بن سيف", "سيف بن سلطان"], c: "بلعرب بن سلطان"},
+                {q: "العالم اللي سوى علم العروض ومعجم العين؟", a: ["الخليل بن أحمد", "ابن دريد", "المبرد"], c: "الخليل بن أحمد"},
+                {q: "المدينة المفقودة ف الربع الخالي هيش اسمها؟", a: ["أوبار", "سمهرم", "البليد"], c: "أوبار"},
+                {q: "ميناء اللبان القديم ف ظفار؟", a: ["البليد", "مرباط", "سدح"], c: "البليد"},
+                {q: "المدينة التاريخية اللي دمرها الزلزال ف صور؟", a: ["قلهات", "طيوي", "رأس الحد"], c: "قلهات"},
+                {q: "قبر (بيبي مريم) وين محله؟", a: ["قلهات", "نزوى", "صحار"], c: "قلهات"},
+                {q: "أعمق فلج ف عمان ومسجل ف اليونسكو؟", a: ["فلج الملكي", "الجيلة", "دارس"], c: "فلج الملكي"},
+                {q: "أطول فلج عندنا هيش اسمه؟", a: ["فلج دارس", "الميسر", "الخطمين"], c: "فلج دارس"},
+                {q: "متى دخلت عمان الأمم المتحدة؟", a: ["1971", "1970", "1975"], c: "1971"},
+                {q: "الفن اللي فيه شعر وفخر وبدون طبول؟", a: ["العازي", "الهمبل", "الرزحة"], c: "العازي"},
+                {q: "مدافن شكلها مثل خلية النحل ف عبري وين؟", a: ["بات والخطم", "زكيت", "سمد"], c: "بات والخطم"},
+                {q: "السفينة العودة (الكبيرة) مالت المحيطات هيش يسمونها؟", a: ["الغانجة", "الهوري", "الشاشه"], c: "الغانجة"},
+                {q: "يوم المرأة العمانية أي تاريخ؟", a: ["17 أكتوبر", "18 نوفمبر", "8 مارس"], c: "17 أكتوبر"},
+                {q: "متى وقعوا اتفاقية السيب؟", a: ["1920", "1955", "1913"], c: "1920"},
+                {q: "أول جريدة عمانية ف زنجبار هيش كان اسمها؟", a: ["الفلق", "النجاح", "النهضة"], c: "النجاح"},
+                {q: "حصن السليف وين يقع؟", a: ["عبري", "مقشن", "أدم"], c: "عبري"},
+                {q: "الإمام اللي وحد البلاد وبدأ دولة اليعاربة؟", a: ["ناصر بن مرشد", "سلطان بن سيف", "مرشد"], c: "ناصر بن مرشد"},
+                {q: "موسم خراف الرطب هيش نسميه؟", a: ["القيظ", "الصرام", "الجداد"], c: "القيظ"},
+                {q: "القائد اللي حرر ممباسا وسموه (قيد الأرض)؟", a: ["سيف بن سلطان", "أحمد بن سعيد", "ثويني"], c: "سيف بن سلطان"},
+                {q: "البريمي ويش كان اسمها قبل؟", a: ["توام", "الجوف", "السر"], c: "توام"},
+                {q: "فن الحريم المعروف ف ظفار؟", a: ["الطبل", "الرزحة", "العازي"], c: "الطبل"},
+                {q: "المعاهدة مع بريطانيا عام 1839 هيش اسمها؟", a: ["الصداقة والتجارة", "الحماية", "مسقط"], c: "الصداقة والتجارة"},
+                {q: "حصن الأسود وين مكانه؟", a: ["عبري", "مقشن", "أدم"], c: "عبري"},
+                {q: "عاصمة عمان ف زمن السيد سعيد بن سلطان كانت مسقط و...؟", a: ["زنجبار", "مكران", "جوادور"], c: "زنجبار"}
+            ]
+        };
+
+        // --- AUDIO ENGINE ---
+        const playSound = (type) => {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const now = ctx.currentTime;
+
+                const sounds = {
+                    click: () => { 
+                        osc.type = 'sine'; 
+                        osc.frequency.setValueAtTime(400, now); 
+                        osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                        osc.start(now); 
+                        osc.stop(now + 0.1); 
+                    },
+                    correct: () => { 
+                        osc.type = 'sine'; 
+                        osc.frequency.setValueAtTime(523.25, now);
+                        osc.frequency.setValueAtTime(659.25, now + 0.1);
+                        gain.gain.setValueAtTime(0.05, now);
+                        gain.gain.linearRampToValueAtTime(0.2, now + 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                        osc.start(now); 
+                        osc.stop(now + 0.4); 
+                    },
+                    bonus: () => { 
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(800, now);
+                        osc.frequency.setValueAtTime(1200, now + 0.1);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                        osc.start(now);
+                        osc.stop(now + 0.3);
+                    },
+                    wrong: () => { 
+                        osc.type = 'triangle'; 
+                        osc.frequency.setValueAtTime(150, now); 
+                        osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                        osc.start(now); 
+                        osc.stop(now + 0.3); 
+                    },
+                    win: () => { 
+                        osc.type = 'sine'; 
+                        osc.frequency.setValueAtTime(400, now); 
+                        osc.frequency.linearRampToValueAtTime(800, now + 0.3);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.linearRampToValueAtTime(0.3, now + 0.2);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                        osc.start(now); 
+                        osc.stop(now + 0.6); 
+                    },
+                    pop: () => { 
+                        osc.type = 'sine'; 
+                        osc.frequency.setValueAtTime(800, now); 
+                        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                        osc.start(now); 
+                        osc.stop(now + 0.05); 
+                    }
+                };
+
+                if(sounds[type]) sounds[type]();
+            } catch(e) { }
+        };
+
+        // --- UI COMPONENTS ---
+        const Button = ({ children, onClick, variant="primary", className="", ...props }) => {
+            const styles = {
+                primary: `bg-indigo-600 border-b-4 border-indigo-800 text-white active:border-b-0 active:translate-y-1 hover:bg-indigo-500`,
+                success: `bg-emerald-500 border-b-4 border-emerald-700 text-white active:border-b-0 active:translate-y-1`,
+                error: `bg-rose-500 border-b-4 border-rose-800 text-white active:border-b-0 active:translate-y-1`,
+                neutral: "bg-slate-700 border-b-4 border-slate-900 text-slate-200 active:border-b-0 active:translate-y-1",
+                ghost: "border-2 border-white/20 text-white hover:bg-white/10 active:scale-95"
+            };
+            return (
+                <button 
+                    onClick={(e) => { playSound('click'); onClick && onClick(e); }}
+                    className={`px-6 py-4 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 select-none ${styles[variant]} ${className}`}
+                    {...props}
+                >
+                    {children}
+                </button>
+            );
+        };
+
+        // --- MUSIC PLAYER COMPONENT (Updated with Conditional Visibility) ---
+        const MusicPlayer = ({ isInGame }) => {
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [volume, setVolume] = useState(0.5);
+            const [showSlider, setShowSlider] = useState(false);
+            const audioRef = useRef(null);
+
+            // Effect to hide slider automatically when game starts
+            useEffect(() => {
+                if (isInGame) {
+                    setShowSlider(false);
+                }
+            }, [isInGame]);
+
+            useEffect(() => {
+                audioRef.current = document.getElementById('bgAudio');
+                if (audioRef.current) {
+                    audioRef.current.volume = volume;
+                }
+                
+                // Auto-play attempt
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        setIsPlaying(true);
+                    }).catch(error => {
+                        console.log("Auto-play prevented");
+                        setIsPlaying(false);
+                    });
+                }
+            }, []);
+
+            const handleMusicButtonClick = () => {
+                // Toggle Play/Pause
+                if (audioRef.current.paused) {
+                    audioRef.current.play();
+                    setIsPlaying(true);
+                } else {
+                    audioRef.current.pause();
+                    setIsPlaying(false);
+                }
+                // Toggle Slider visibility when button is pressed
+                setShowSlider(!showSlider);
+            };
+
+            const handleVolumeChange = (e) => {
+                const newVolume = parseFloat(e.target.value);
+                setVolume(newVolume);
+                if (audioRef.current) {
+                    audioRef.current.volume = newVolume;
+                }
+            };
+
+            return (
+                <div className="fixed top-4 left-4 z-50 flex flex-col gap-2 items-start">
+                    <button 
+                        onClick={handleMusicButtonClick}
+                        className={`rounded-full px-4 py-2 border flex items-center gap-2 transition-all duration-300 ${isPlaying ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'bg-black/40 border-white/20 text-white/60 hover:bg-black/60'}`}
+                    >
+                        <Icon name={isPlaying ? "Volume2" : "VolumeX"} size={18} />
+                        <span className="text-xs font-bold hidden sm:inline">{isPlaying ? "تشغيل" : "إيقاف"}</span>
+                    </button>
+                    
+                    {/* Volume Slider: Visible only if showSlider is true and typically hidden at game start */}
+                    {showSlider && (
+                        <div className="bg-black/60 backdrop-blur-sm border border-white/10 p-2 rounded-xl flex items-center gap-2 animate-fade-in">
+                            <Icon name="Volume1" size={14} className="text-white/60" />
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="1" 
+                                step="0.01" 
+                                value={volume} 
+                                onChange={handleVolumeChange}
+                                className="volume-slider w-20"
+                            />
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- FOOTER COMPONENT (Updated: Removed clickable links) ---
+        const Footer = () => (
+            <div className="fixed bottom-0 left-0 w-full z-40 bg-slate-900/90 backdrop-blur-md border-t border-white/10 p-3 flex flex-wrap justify-center items-center gap-4 text-xs sm:text-sm shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                    <span className="text-purple-400 font-bold uppercase tracking-wider">المطور الرئيسي</span>
+                    <span className="flex items-center gap-1 text-white" dir="ltr">
+                        <Icon name="Instagram" size={14} /> @eventplus.om
+                    </span>
+                </div>
+                <div className="w-px h-4 bg-white/10 hidden sm:block"></div>
+                <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                    <span className="text-pink-400 font-bold uppercase tracking-wider">للطلب تصميم العاب</span>
+                    <span className="flex items-center gap-1 text-white" dir="ltr">
+                        <Icon name="Phone" size={14} /> +968 77220363
+                    </span>
+                </div>
+            </div>
+        );
+
+        // --- VIRTUAL KEYBOARD COMPONENT ---
+        const VirtualKeyboard = ({ onChar, onDelete, onEnter, isVisible }) => {
+            if (!isVisible) return null;
+
+            const rows = [
+                ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+                ['ض', 'ص', 'ث', 'ق', 'ف', 'غ', 'ع', 'ه', 'خ', 'ح', 'ج', 'د'],
+                ['ش', 'س', 'ي', 'ب', 'ل', 'ا', 'ت', 'ن', 'م', 'ك', 'ط'],
+                ['ذ', 'ئ', 'ء', 'ؤ', 'ر', 'لا', 'ى', 'ة', 'و', 'ز', 'ظ'],
+                ['SPACE', 'DEL', 'ENTER']
+            ];
+
+            return (
+                <div className="absolute top-0 left-0 w-full bg-slate-900/95 border-b-2 border-purple-500/50 p-2 z-50 shadow-2xl backdrop-blur-md animate-slideDown">
+                    <div className="flex flex-col gap-2 max-w-4xl mx-auto">
+                        {rows.map((row, i) => (
+                            <div key={i} className="flex justify-center gap-1">
+                                {row.map((key) => {
+                                    if (key === 'SPACE') return (
+                                        <button key={key} onClick={() => onChar(' ')} className="h-12 flex-1 max-w-[200px] bg-slate-700 rounded-lg active:bg-purple-600 transition-colors text-white font-bold border border-white/10">
+                                            مسافة
+                                        </button>
+                                    );
+                                    if (key === 'DEL') return (
+                                        <button key={key} onClick={onDelete} className="h-12 w-20 bg-red-900/50 rounded-lg active:bg-red-600 transition-colors text-white font-bold border border-white/10 flex items-center justify-center">
+                                            <Icon name="Delete" size={20} />
+                                        </button>
+                                    );
+                                    if (key === 'ENTER') return (
+                                        <button key={key} onClick={onEnter} className="h-12 w-24 bg-green-600 rounded-lg active:bg-green-500 transition-colors text-white font-bold border border-white/10">
+                                            تأكيد
+                                        </button>
+                                    );
+                                    return (
+                                        <button key={key} onClick={() => onChar(key)} className="h-12 w-10 sm:w-12 bg-slate-700 rounded-lg active:bg-purple-600 transition-colors text-white font-bold text-lg border border-white/10 shadow-sm">
+                                            {key}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const LivesDisplay = ({ lives }) => (
+            <div className="flex gap-1 bg-black/30 p-2 rounded-lg backdrop-blur-sm border border-white/10">
+                {[...Array(3)].map((_, i) => (
+                    <Icon 
+                        key={i} 
+                        name="Heart" 
+                        size={20} 
+                        className={`${i < lives ? 'text-red-500 fill-red-500' : 'text-gray-600'} transition-colors duration-300`} 
+                    />
+                ))}
+            </div>
+        );
+
+        // --- HELPER ---
+        const shuffleArray = (array) => {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        };
+
+        // --- SUB-GAMES IMPLEMENTATIONS ---
+        
+        const GameQuiz = ({ diff, onScore, onEnd, onLifeLost }) => {
+            const [questions, setQuestions] = useState([]);
+            const [qIdx, setQIdx] = useState(0);
+            const [timeLeft, setTimeLeft] = useState(15 * diff.timeFactor);
+            const [streak, setStreak] = useState(0); 
+
+            useEffect(() => {
+                const difficultyKey = diff.id;
+                const pool = QUESTIONS_DB[difficultyKey] || QUESTIONS_DB.EASY; 
+
+                const selectedQuestions = shuffleArray([...pool]).slice(0, 5).map(q => ({
+                    ...q,
+                    a: shuffleArray([...q.a]) 
+                }));
+                
+                setQuestions(selectedQuestions);
+
+                const timer = setInterval(() => {
+                    setTimeLeft(t => { 
+                        if(t <= 0) { clearInterval(timer); onEnd(); return 0; } 
+                        return t - 0.1; 
+                    });
+                }, 100);
+                return () => clearInterval(timer);
+            }, [diff.id]);
+
+            const handleAns = (ans) => {
+                if(ans === questions[qIdx].c) {
+                    playSound('correct');
+                    
+                    let pointsToAdd = diff.quizPoints;
+                    const newStreak = streak + 1;
+                    
+                    if (newStreak === 2) {
+                        pointsToAdd = Math.floor(pointsToAdd * 1.25);
+                        playSound('bonus');
+                    } else if (newStreak === 3) {
+                        pointsToAdd = Math.floor(pointsToAdd * 1.50);
+                        playSound('bonus');
+                    } else if (newStreak >= 4) {
+                        pointsToAdd = Math.floor(pointsToAdd * 2.0);
+                        playSound('bonus');
+                    }
+
+                    onScore(pointsToAdd);
+                    setStreak(newStreak);
+
+                    if(qIdx < questions.length - 1) {
+                        setQIdx(qIdx + 1);
+                        setTimeLeft(15 * diff.timeFactor);
+                    } else {
+                        onEnd(); 
+                    }
+                } else {
+                    playSound('wrong');
+                    onLifeLost();
+                    setStreak(0); 
+                    
+                    if(qIdx < questions.length - 1) {
+                        setQIdx(qIdx + 1);
+                        setTimeLeft(15 * diff.timeFactor);
+                    } else { 
+                        onEnd(); 
+                    }
+                }
+            };
+
+            if (questions.length === 0) return <div>جاري التحميل...</div>;
+
+            return (
+                <div className="flex flex-col h-full justify-center space-y-6">
+                    <div className="flex justify-between text-2xl font-bold px-4">
+                        <span>سؤال {qIdx+1} / {questions.length}</span>
+                        <div className="flex gap-4">
+                            {streak > 1 && <span className="text-green-400 animate-pulse font-bold">x{streak >= 4 ? '2' : streak === 3 ? '1.5' : '1.25'}!</span>}
+                            <span className="text-yellow-400">{Math.ceil(timeLeft)}ث</span>
+                        </div>
+                    </div>
+                    <div className="bg-white/10 p-8 rounded-2xl text-2xl font-bold text-center min-h-[120px] flex items-center justify-center border border-white/10">
+                        {questions[qIdx].q}
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                        {questions[qIdx].a.map((opt, i) => (
+                            <Button key={i} onClick={() => handleAns(opt)} variant="neutral">{opt}</Button>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const GameReflex = ({ diff, onScore, onEnd, onLifeLost }) => {
+            const [grid, setGrid] = useState(Array(9).fill(null));
+            const [active, setActive] = useState(null); 
+            const [timeLeft, setTimeLeft] = useState(30);
+            const timerRef = useRef(null);
+            const mountedRef = useRef(true);
+            const [streak, setStreak] = useState(0); 
+
+            useEffect(() => {
+                mountedRef.current = true;
+                spawnTarget();
+                const gameTimer = setInterval(() => { setTimeLeft(t => { if(t<=0) { onEnd(); return 0; } return t-1; }); }, 1000);
+                return () => { mountedRef.current = false; clearInterval(gameTimer); clearTimeout(timerRef.current); };
+            }, []);
+
+            const spawnTarget = () => {
+                if (!mountedRef.current) return;
+                if(timerRef.current) clearTimeout(timerRef.current);
+                
+                const nextIndex = Math.floor(Math.random() * 9);
+                const nextType = Math.random() > 0.3 ? 'TARGET' : 'BOMB';
+                
+                setActive({ index: nextIndex, type: nextType });
+                
+                const duration = 1000 / diff.speedFactor;
+                
+                timerRef.current = setTimeout(() => { 
+                    if (mountedRef.current) {
+                        setActive(null); 
+                        setTimeout(spawnTarget, 200);
+                    }
+                }, duration); 
+            };
+
+            const handleClick = (idx) => {
+                if (!active || idx !== active.index) return; 
+
+                if(active.type === 'TARGET') {
+                    let pointsToAdd = 20; 
+                    const newStreak = streak + 1;
+
+                    if (newStreak === 3) {
+                         pointsToAdd = Math.floor(pointsToAdd * 1.5); 
+                         playSound('bonus');
+                    } else if (newStreak > 3) {
+                         pointsToAdd = Math.floor(pointsToAdd * 2.0); 
+                         playSound('bonus');
+                    } else {
+                        playSound('pop');
+                    }
+                    
+                    onScore(pointsToAdd);
+                    setStreak(newStreak);
+                    
+                    setActive(null);
+                    spawnTarget(); 
+                } else if (active.type === 'BOMB') {
+                    playSound('wrong'); 
+                    onLifeLost();
+                    setStreak(0); 
+                    setActive(null);
+                    spawnTarget();
+                }
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-full">
+                    <div className="flex justify-between w-full px-4 mb-4">
+                         <div className="text-3xl font-mono text-yellow-400">{timeLeft}ث</div>
+                         {streak > 2 && <div className="text-green-400 font-bold animate-pulse">🔥 x{streak > 3 ? '2' : '1.5'}</div>}
+                    </div>
+                    <div className="grid grid-cols-3 gap-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+                        {[...Array(9)].map((_, i) => (
+                            <button 
+                                key={i} 
+                                onClick={() => handleClick(i)} 
+                                className={`w-24 h-24 rounded-xl transition-all duration-75 flex items-center justify-center bg-slate-800 scale-95 border border-white/5 overflow-hidden`}
+                            >
+                                {active && active.index === i && (
+                                    <div className={`animate-bounceIn w-full h-full flex items-center justify-center`}>
+                                        {active.type === 'TARGET' ? (
+                                            <div className="w-16 h-16 bg-green-500 rounded-lg shadow-[0_0_15px_rgba(34,197,94,0.8)] border-4 border-green-300 animate-pulse"></div>
+                                        ) : (
+                                            <div className="relative w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.8)] border-4 border-red-400">
+                                                <Icon name="Bomb" size={32} className="text-black drop-shadow-sm absolute" />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="mt-4 text-center text-sm opacity-60">
+                        <p>اضغط على المربع الأخضر <span className="text-green-400">■</span></p>
+                        <p>تجنب القنابل <Icon name="Bomb" size={14} className="inline text-red-500"/>!</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const GameColor = ({ diff, onScore, onEnd, onLifeLost }) => {
+            const COLORS = [{ n: 'أحمر', h: 'text-red-500', v: 'red' }, { n: 'أزرق', h: 'text-blue-500', v: 'blue' }, { n: 'أخضر', h: 'text-green-500', v: 'green' }, { n: 'أصفر', h: 'text-yellow-500', v: 'yellow' }];
+            const [current, setCurrent] = useState({ text: '', color: '', match: false });
+            const [timeLeft, setTimeLeft] = useState(20);
+            const [streak, setStreak] = useState(0);
+
+            useEffect(() => {
+                nextRound();
+                const t = setInterval(() => setTimeLeft(prev => { if(prev <= 0) { onEnd(); return 0; } return prev - 1; }), 1000);
+                return () => clearInterval(t);
+            }, []);
+
+            const nextRound = () => {
+                const tO = COLORS[Math.floor(Math.random() * 4)];
+                const cO = COLORS[Math.floor(Math.random() * 4)];
+                const isMatch = Math.random() > 0.5;
+                if (isMatch) setCurrent({ text: tO.n, color: tO.h, match: true });
+                else {
+                    let fC = cO; while(fC.n === tO.n) fC = COLORS[Math.floor(Math.random() * 4)];
+                    setCurrent({ text: tO.n, color: fC.h, match: false });
+                }
+            };
+
+            const handleChoice = (c) => {
+                let pointsToAdd = 30; 
+                const newStreak = streak + 1;
+
+                if (c === current.match) { 
+                    
+                    if (newStreak === 3) {
+                         pointsToAdd = Math.floor(pointsToAdd * 1.5); 
+                         playSound('bonus');
+                    } else if (newStreak > 3) {
+                         pointsToAdd = Math.floor(pointsToAdd * 2.0); 
+                         playSound('bonus');
+                    } else {
+                        playSound('correct'); 
+                    }
+
+                    onScore(pointsToAdd); 
+                    setStreak(newStreak);
+                } else { 
+                    playSound('wrong'); 
+                    onLifeLost();
+                    setStreak(0);
+                }
+                nextRound();
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-full gap-8">
+                    <div className="flex justify-between w-full px-8">
+                        <div className="text-xl text-white/70">هل تطابق الكلمة اللون؟</div>
+                        {streak > 2 && <div className="text-green-400 font-bold animate-pulse">🔥 x{streak > 3 ? '2' : '1.5'}</div>}
+                    </div>
+                    <div className={`text-6xl font-black ${current.color} drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-150`}>{current.text}</div>
+                    <div className="text-2xl font-mono text-yellow-400">{timeLeft}ث</div>
+                    <div className="flex gap-4 w-full px-8">
+                        <Button onClick={() => handleChoice(true)} variant="success" className="flex-1">صح</Button>
+                        <Button onClick={() => handleChoice(false)} variant="error" className="flex-1">خطأ</Button>
+                    </div>
+                </div>
+            );
+        };
+
+        const GameSniper = ({ diff, onScore, onEnd }) => {
+            const [running, setRunning] = useState(true);
+            const [now, setNow] = useState(0);
+            const [target, setTarget] = useState(5.000);
+            const tolerance = 10.0; 
+            
+            useEffect(() => {
+                let min, max;
+                if (diff.id === 'EASY') {
+                    min = 1; max = 5;
+                } else if (diff.id === 'MEDIUM') {
+                    min = 3; max = 8;
+                } else { 
+                    min = 5; max = 13;
+                }
+                const newTarget = Math.floor(Math.random() * (max - min + 1)) + min;
+                setTarget(newTarget);
+            }, [diff.id]);
+
+            useEffect(() => {
+                let start = Date.now();
+                
+                let tickRate = 17;
+                if (diff.id === 'HARD') {
+                    tickRate = 5; 
+                } else if (diff.id === 'MEDIUM') {
+                    tickRate = 12; 
+                } else {
+                    tickRate = 20; 
+                }
+                
+                const int = setInterval(() => { 
+                    if(running) {
+                        const delta = (Date.now() - start) / 1000;
+                        let speedMultiplier = 1.0;
+                        if (diff.id === 'HARD') speedMultiplier = 2.5; 
+                        else if (diff.id === 'MEDIUM') speedMultiplier = 1.5; 
+                        setNow(delta * speedMultiplier);
+                    }
+                }, tickRate);
+                
+                return () => clearInterval(int);
+            }, [running, diff.id]);
+
+            const stop = () => {
+                if(!running) return;
+                setRunning(false);
+                const diffVal = Math.abs(now - target);
+                
+                let percentage = 0;
+                
+                if (diffVal <= 0.05) {
+                    percentage = 1.0; 
+                    playSound('win');
+                } else if (diffVal <= 0.2) {
+                    percentage = 0.8; 
+                    playSound('win');
+                } else if (diffVal <= 0.5) {
+                    percentage = 0.5; 
+                    playSound('win');
+                } else if (diffVal <= 1.0) {
+                    percentage = 0.1; 
+                    playSound('wrong'); 
+                } else {
+                    percentage = 0.0;
+                    playSound('wrong');
+                }
+                
+                const finalPoints = Math.floor(diff.sniperPoints * percentage);
+                
+                onScore(finalPoints);
+                setTimeout(onEnd, 2500);
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-full gap-8">
+                    <div className="text-xl text-indigo-300">الهدف: {target.toFixed(3)}</div>
+                    <div className={`text-7xl font-mono font-bold tabular-nums text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] ${diff.id === 'HARD' ? 'text-red-500 animate-pulse' : ''}`}>
+                        {now.toFixed(3)}
+                    </div>
+                    <Button onClick={stop} disabled={!running} className="w-full py-8 text-2xl animate-pulse bg-red-600 border-red-800 hover:bg-red-500">
+                        أطلق النار!
+                    </Button>
+                    {diff.id === 'HARD' && <div className="text-xs text-red-400 font-bold">تحذير: العداد سريع جداً!</div>}
+                </div>
+            );
+        };
+
+        // --- MAIN ENGINE ---
+        const GameEngine = ({ gameId, difficulty, onExit, onAutoSave, onViewLeaderboard, onHome }) => {
+            const [score, setScore] = useState(0);
+            const [isOver, setIsOver] = useState(false);
+            const [lives, setLives] = useState(3);
+            const config = DIFFICULTY_CONFIG[difficulty];
+            const gameData = GAMES_LIST.find(g => g.id === gameId);
+
+            // New Effect: Handles Auto-Save and Sound when game is over
+            useEffect(() => {
+                if (isOver) {
+                    // 1. Auto Save Score
+                    onAutoSave(score);
+                    
+                    // 2. Play Result Sound immediately
+                    playSound('win'); 
+                }
+            }, [isOver]);
+
+            const handleScore = useCallback((pts) => {
+                const finalPts = pts > 1000 ? pts : Math.floor(pts * config.multiplier);
+                setScore(s => Math.max(0, s + finalPts));
+            }, [config]);
+
+            const handleLifeLost = () => {
+                setLives(prev => {
+                    const newLives = prev - 1;
+                    if(newLives <= 0) {
+                        handleEnd();
+                        return 0;
+                    }
+                    return newLives;
+                });
+            };
+
+            const handleEnd = () => { 
+                setIsOver(true); 
+            };
+
+            if (isOver) {
+                return (
+                    <div key="result" className="flex flex-col items-center justify-center h-full animate-float space-y-6">
+                        {lives <= 0 ? (
+                            <Icon name="Skull" size={80} className="text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" />
+                        ) : (
+                            <Icon name="Trophy" size={80} className="text-yellow-400 drop-shadow-[0_0_20px_rgba(250,204,21,0.6)]" />
+                        )}
+                        <h2 className="text-4xl font-bold">{lives <= 0 ? 'انتهت اللعبة!' : 'النتيجة النهائية'}</h2>
+                        <div className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 drop-shadow-sm">
+                            {score}
+                        </div>
+                        <div className="bg-white/10 px-4 py-2 rounded-lg border border-white/10">المستوى: {config.label}</div>
+                        
+                        <div className="flex flex-col w-64 gap-3">
+                            <Button onClick={onViewLeaderboard} variant="success" className="w-full">
+                                <Icon name="List" size={20} /> لوحة الصدارة
+                            </Button>
+                            <Button onClick={() => onHome(score)} variant="error" className="w-full">
+                                 <Icon name="LogOut" size={20} /> خروج وتغيير الاسم
+                            </Button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const props = { 
+                diff: config, 
+                onScore: handleScore, 
+                onEnd: handleEnd,
+                onLifeLost: handleLifeLost 
+            };
+
+            return (
+                <div key="game" className="h-full w-full max-w-lg mx-auto p-4 flex flex-col pb-16">
+                    <div className="flex justify-between items-center mb-4 bg-slate-800/80 backdrop-blur p-3 rounded-xl border border-white/10 shadow-lg">
+                        <div className="flex gap-2">
+                            <Button onClick={handleEnd} variant="ghost" className="px-3 py-1 text-xs h-8">إنهاء</Button>
+                            {gameData?.hasLives && <LivesDisplay lives={lives} />}
+                        </div>
+                        <div className="font-bold text-xl font-mono text-purple-300">{score} <span className="text-xs text-white/50">XP</span></div>
+                        <div className={`px-2 py-1 rounded text-xs border ${config.border} ${config.color}`}>{config.label}</div>
+                    </div>
+                    <div className={`flex-1 bg-slate-900/50 rounded-2xl border border-white/5 relative overflow-hidden p-2 shadow-inner ${lives <= 0 ? 'animate-shake' : ''}`}>
+                        {gameId === 'QUIZ' && <GameQuiz {...props} />}
+                        {gameId === 'REFLEX' && <GameReflex {...props} />}
+                        {gameId === 'COLOR' && <GameColor {...props} />}
+                        {gameId === 'SNIPER' && <GameSniper {...props} />}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- LEADERBOARD SCREEN ---
+        const LeaderboardScreen = ({ onBack, currentName }) => {
+            const [data, setData] = useState([]);
+            
+            useEffect(() => {
+                const saved = localStorage.getItem('eventPlusLeaderboardAR');
+                if (saved) {
+                    const parsedData = JSON.parse(saved);
+                    setData(parsedData);
+                }
+            }, []);
+
+            return (
+                <div className={`h-full flex flex-col ${THEME.gradient} p-6 relative overflow-hidden pb-16`}>
+                     <div className="absolute inset-0 crt-scanline opacity-30"></div>
+                     <div className="relative z-10 flex flex-col h-full max-w-2xl mx-auto w-full">
+                        <div className="flex justify-between items-center mb-8">
+                            <h2 className="text-3xl font-bold flex items-center gap-3">
+                                <Icon name="Trophy" className="text-yellow-400" />
+                                <span>لوحة الصدارة</span>
+                            </h2>
+                            <Button onClick={onBack} variant="ghost" className="p-2 rounded-full"><Icon name="X" /></Button>
+                        </div>
+
+                        <div className="flex justify-center items-center mb-4 text-white/70">
+                            <Icon name="Users" size={18} className="mr-2" />
+                            <span>المشاركين: {data.length}</span>
+                        </div>
+
+                        <div className="flex-1 bg-slate-800/50 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                            <div className="grid grid-cols-4 bg-indigo-900/50 p-4 font-bold text-indigo-200 uppercase tracking-wider text-sm border-b border-indigo-500/30">
+                                <span className="text-center">#</span>
+                                <span className="col-span-2">اللاعب</span>
+                                <span className="text-left">النقاط</span>
+                            </div>
+                            <div className="overflow-y-auto max-h-[60vh] no-scrollbar">
+                                {data.length === 0 ? (
+                                    <div className="p-12 text-center text-white/30 flex flex-col items-center gap-4">
+                                        <Icon name="Ghost" size={48} />
+                                        <span>لا يوجد نتائج بعد.. كن الأول!</span>
+                                    </div>
+                                ) : (
+                                    data.map((entry, idx) => {
+                                        const isCurrentUser = entry.id === localStorage.getItem('currentSessionId');
+                                        return (
+                                            <div key={idx} className={`grid grid-cols-4 p-4 border-b border-white/5 items-center hover:bg-white/5 transition-colors ${isCurrentUser ? 'bg-indigo-500/20 border-l-4 border-l-indigo-400' : ''}`}>
+                                                <div className="flex justify-center">
+                                                    {idx < 3 ? (
+                                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-lg ${idx===0?'bg-yellow-400 text-black shadow-yellow-500/50': idx===1?'bg-slate-300 text-black': 'bg-amber-700 text-white'}`}>
+                                                            {idx+1}
+                                                        </div>
+                                                    ) : <span className="text-white/40 font-mono">#{idx+1}</span>}
+                                                </div>
+                                                <div className="col-span-2 font-bold text-lg truncate flex items-center gap-2">
+                                                    {entry.name}
+                                                    {isCurrentUser && <span className="text-[10px] bg-indigo-500 px-1 rounded text-white">أنت</span>}
+                                                </div>
+                                                <div className="text-left font-mono text-xl text-emerald-400 font-bold">{entry.score}</div>
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </div>
+                     </div>
+                </div>
+            );
+        };
+
+        // --- APP ORCHESTRATOR ---
+        const App = () => {
+            const [screen, setScreen] = useState('START');
+            const [name, setName] = useState('');
+            const [diff, setDiff] = useState('MEDIUM');
+            const [showKeyboard, setShowKeyboard] = useState(false);
+            const [activeGame, setActiveGame] = useState(null);
+
+            const saveDataInternal = (finalScore) => {
+                const sessionId = Date.now().toString();
+                localStorage.setItem('currentSessionId', sessionId);
+
+                const newEntry = {
+                    id: sessionId, 
+                    name: name || "لاعب مجهول",
+                    score: finalScore,
+                    date: new Date().toISOString()
+                };
+                const saved = localStorage.getItem('eventPlusLeaderboardAR');
+                let list = saved ? JSON.parse(saved) : [];
+                list.push(newEntry);
+                list.sort((a, b) => b.score - a.score);
+                list = list.slice(0, 50);
+                localStorage.setItem('eventPlusLeaderboardAR', JSON.stringify(list));
+            };
+
+            const handleAutoSave = (finalScore) => {
+                saveDataInternal(finalScore);
+            };
+
+            const handleViewLeaderboard = () => {
+                setScreen('LEADERBOARD');
+            };
+
+            const resetGame = () => {
+                setScreen('START');
+                setName('');
+            };
+
+            const handleKeyChar = (char) => {
+                if (char === ' ') {
+                    if (name.length < 15) setName(prev => prev + ' ');
+                } else {
+                    if (name.length < 15) setName(prev => prev + char);
+                }
+            };
+            const handleKeyDelete = () => {
+                setName(prev => prev.slice(0, -1));
+            };
+            const handleKeyEnter = () => {
+                setShowKeyboard(false);
+            };
+
+            return (
+                <div className="h-full relative">
+                    {/* Pass state to MusicPlayer to control auto-hide */}
+                    <MusicPlayer isInGame={screen === 'GAME'} />
+                    
+                    {screen === 'START' && (
+                        <div className={`h-full flex flex-col items-center justify-center ${THEME.gradient} p-6 text-center space-y-8 relative pb-16`}>
+                            <div className="absolute inset-0 crt-scanline"></div>
+                            <div className="mb-8 relative flex justify-center animate-float">
+                                <div className="absolute -inset-8 bg-purple-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                                <svg viewBox="0 0 200 200" className="w-56 h-56 relative z-10 drop-shadow-[0_0_35px_rgba(139,92,246,0.6)]" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stopColor="#c084fc" />
+                                            <stop offset="50%" stopColor="#a855f7" />
+                                            <stop offset="100%" stopColor="#6366f1" />
+                                        </linearGradient>
+                                        <filter id="neonGlow" height="300%" width="300%" x="-75%" y="-75%">
+                                            <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+                                            <feMerge>
+                                                <feMergeNode in="coloredBlur" />
+                                                <feMergeNode in="SourceGraphic" />
+                                            </feMerge>
+                                        </filter>
+                                    </defs>
+                                    <path d="M100 10 L186.6 60 V160 L100 210 L13.4 160 V60 Z" fill="none" stroke="url(#logoGrad)" strokeWidth="4" opacity="0.3" transform="scale(0.9) translate(11,11)" />
+                                    <path d="M100 25 L165 62.5 V137.5 L100 175 L35 137.5 V62.5 Z" fill="rgba(168, 85, 247, 0.1)" stroke="url(#logoGrad)" strokeWidth="6" strokeLinejoin="round" filter="url(#neonGlow)" />
+                                    <circle cx="130" cy="100" r="12" fill="url(#logoGrad)" opacity="0.8" />
+                                    <circle cx="70" cy="100" r="12" fill="url(#logoGrad)" opacity="0.8" />
+                                    <circle cx="100" cy="70" r="8" fill="white" opacity="0.5" />
+                                    <path d="M100 110 L115 135 H85 Z" fill="white" opacity="0.9" filter="url(#neonGlow)" /> 
+                                    <path d="M100 25 V45 M100 175 V155 M35 100 H55 M165 100 H145" stroke="white" strokeWidth="2" opacity="0.5" strokeLinecap="round" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 className="text-xl text-purple-300 tracking-[0.5em] uppercase mb-2">منطقة التحدي</h2>
+                                <h1 className="text-6xl font-black tracking-tighter">
+                                    EVENT PLUS<br/>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 drop-shadow-lg">GAMES</span>
+                                </h1>
+                            </div>
+                            <div className="w-full max-w-sm space-y-4 relative z-20">
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        placeholder="اكتب اسمك للمنافسة" 
+                                        className="w-full bg-slate-800/80 border-2 border-white/10 rounded-xl p-5 text-center text-2xl font-bold focus:border-purple-500 focus:outline-none transition-all placeholder:text-white/20 shadow-xl"
+                                        value={name}
+                                        readOnly
+                                        onClick={() => setShowKeyboard(true)}
+                                    />
+                                    {name && <Icon name="Check" className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" />}
+                                </div>
+                                <Button 
+                                    onClick={() => name && setScreen('DIFFICULTY')} 
+                                    disabled={!name}
+                                    className={`w-full text-xl py-6 shadow-purple-900/50 ${!name ? 'opacity-50 grayscale' : 'animate-pulse'}`}
+                                >
+                                    <span className="ml-2">ابدأ التحدي</span> <Icon name="ChevronLeft" />
+                                </Button>
+                                <Button variant="ghost" onClick={() => setScreen('LEADERBOARD')} className="w-full border-none text-purple-300 hover:text-white">
+                                     مشاهدة الصدارة <Icon name="Trophy" size={16} className="mr-2" />
+                                </Button>
+                            </div>
+                            
+                            <VirtualKeyboard 
+                                isVisible={showKeyboard} 
+                                onChar={handleKeyChar} 
+                                onDelete={handleKeyDelete} 
+                                onEnter={handleKeyEnter} 
+                            />
+                        </div>
+                    )}
+
+                    {screen === 'DIFFICULTY' && (
+                        <div className={`h-full flex flex-col justify-center ${THEME.gradient} p-6 relative pb-16`}>
+                            <div className="absolute inset-0 crt-scanline opacity-20"></div>
+                            <Button variant="ghost" className="absolute top-6 right-6 w-12 h-12 rounded-full p-0" onClick={() => setScreen('START')}><Icon name="ArrowRight" /></Button>
+                            
+                            <h2 className="text-3xl font-bold text-center mb-10 drop-shadow-md">اختر مستوى الصعوبة</h2>
+                            <div className="grid gap-6 max-w-md mx-auto w-full">
+                                {Object.values(DIFFICULTY_CONFIG).map((d) => (
+                                    <button
+                                        key={d.id}
+                                        onClick={() => { setDiff(d.id); setScreen('MENU'); playSound('click'); }}
+                                        className={`relative p-8 rounded-2xl border-2 transition-all duration-300 hover:scale-105 active:scale-95 text-right overflow-hidden group ${d.border} bg-slate-800/80 backdrop-blur shadow-xl`}
+                                    >
+                                        <div className="flex justify-between items-center mb-2">
+                                            <div className={`text-3xl font-black ${d.color}`}>{d.label}</div>
+                                            <Icon name={d.id === 'EASY' ? 'Smile' : d.id === 'MEDIUM' ? 'Zap' : 'Skull'} className={d.color} size={32} />
+                                        </div>
+                                        <div className="text-sm text-white/60 font-mono">نقاط x{d.multiplier} | سرعة {Math.floor(d.speedFactor*100)}%</div>
+                                        <div className={`absolute right-0 top-0 h-full w-2 ${d.color.replace('text', 'bg')}`}></div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {screen === 'MENU' && (
+                        <div className={`h-full flex flex-col ${THEME.gradient} p-4 overflow-hidden relative pb-16`}>
+                            <div className="absolute inset-0 crt-scanline opacity-10"></div>
+                            <div className="flex justify-between items-center mb-6 px-2 pt-2 z-10">
+                                <div className="flex flex-col">
+                                    <h2 className="text-xl font-bold text-white/90">مرحبا، <span className="text-purple-400 border-b-2 border-purple-500/50">{name}</span></h2>
+                                    <span className={`text-[10px] mt-1 self-start px-2 py-0.5 rounded border ${DIFFICULTY_CONFIG[diff].border} ${DIFFICULTY_CONFIG[diff].color} bg-slate-900`}>{DIFFICULTY_CONFIG[diff].label}</span>
+                                </div>
+                                <Button variant="ghost" className="w-12 h-12 rounded-full p-0 bg-white/5" onClick={() => setScreen('START')}><Icon name="LogOut" size={20} /></Button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto no-scrollbar pb-24 z-10">
+                                <div className="grid grid-cols-2 gap-4">
+                                    {GAMES_LIST.map(g => (
+                                        <button
+                                            key={g.id}
+                                            onClick={() => { setActiveGame(g.id); setScreen('GAME'); playSound('click'); }}
+                                            className="group relative h-40 rounded-3xl overflow-hidden transition-all duration-300 transform hover:scale-[1.02] active:scale-95 border border-white/10 hover:border-purple-400/50 shadow-lg hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] bg-slate-800"
+                                        >
+                                            <div className={`absolute inset-0 bg-gradient-to-br ${g.color} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 z-10">
+                                                <div className="p-3 bg-slate-900/50 rounded-2xl backdrop-blur-sm group-hover:bg-slate-900/80 transition-colors shadow-inner border border-white/5">
+                                                    <Icon name={g.icon} size={32} className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="font-bold text-lg text-white drop-shadow-md">{g.name}</div>
+                                                    <div className="text-[10px] text-white/50 font-medium tracking-wide mt-1">{g.desc}</div>
+                                                </div>
+                                            </div>
+                                            {g.hasLives && (
+                                                <div className="absolute top-2 right-2 flex gap-0.5">
+                                                    <Icon name="Heart" size={12} className="text-red-500 fill-red-500" />
+                                                    <Icon name="Heart" size={12} className="text-red-500 fill-red-500" />
+                                                    <Icon name="Heart" size={12} className="text-red-500 fill-red-500" />
+                                                </div>
+                                            )}
+                                            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {screen === 'GAME' && (
+                        <div key={activeGame} className={`h-full ${THEME.gradient}`}>
+                            <GameEngine 
+                                gameId={activeGame} 
+                                difficulty={diff} 
+                                onExit={() => setScreen('MENU')} 
+                                onAutoSave={handleAutoSave}
+                                onViewLeaderboard={handleViewLeaderboard}
+                                onHome={resetGame} 
+                            />
+                        </div>
+                    )}
+
+                    {screen === 'LEADERBOARD' && (
+                        <LeaderboardScreen 
+                            onBack={resetGame} 
+                            currentName={name} 
+                        />
+                    )}
+
+                    {/* Persistent Footer */}
+                    <Footer />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
