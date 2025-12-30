@@ -14,6 +14,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+	{
+    /* يمنع التكبير بالنقر المزدوج ويسرع استجابة اللمس */
+    touch-action: manipulation; 
+}
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
 
         body { 
@@ -986,6 +990,48 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+		let tapCount = 0;       // عداد النقرات
+  let tapTimer = null;    // مؤقت لإعادة ضبط العداد
+
+  // استمع للنقرات على كامل الصفحة (document)
+  document.addEventListener('click', function() {
+    tapCount++; // زيادة العداد مع كل نقرة
+
+    // إذا توقف المستخدم عن النقر لمدة نصف ثانية، نعيد العداد للصفر
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => {
+      tapCount = 0;
+    }, 500); // 500 ميلي ثانية (نصف ثانية) مهلة بين النقرات
+
+    // إذا وصل العدد إلى 5 نقرات
+    if (tapCount === 5) {
+      toggleFullScreen(); // نفذ دالة التبديل
+      tapCount = 0;       // صفر العداد فوراً
+    }
+  });
+
+  // دالة التعامل مع وضع ملء الشاشة
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      // الدخول في وضع ملء الشاشة
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) { /* Safari/Android القديم */
+        document.documentElement.webkitRequestFullscreen();
+      } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+        document.documentElement.msRequestFullscreen();
+      }
+    } else {
+      // الخروج من وضع ملء الشاشة
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari/Android القديم */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
+    }
+  }
     </script>
 </body>
 </html>
