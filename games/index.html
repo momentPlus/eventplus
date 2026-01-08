@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Event Plus - تحدي المهرجان</title>
+    <title>Event Plus - المهرجان المتكامل</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- React & ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
+    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-	{
-    touch-action: manipulation;
-}
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
 
         body { 
             touch-action: none; 
@@ -28,176 +28,164 @@
             background-color: #0f0518;
         }
         
-        /* --- BACKGROUNDS --- */
-        .bg-hero-container {
-            position: absolute; inset: 0; z-index: -2;
-            background-color: #0f0518; overflow: hidden;
-        }
-        .hero-orb {
-            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
-            animation: orbFloat 10s infinite ease-in-out alternate;
-        }
+        /* --- المؤثرات البصرية --- */
+        .bg-hero-container { position: absolute; inset: 0; z-index: -2; background-color: #0f0518; overflow: hidden; }
+        .hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: orbFloat 10s infinite ease-in-out alternate; }
         .orb-1 { top: -10%; left: -10%; width: 70vw; height: 70vw; background: radial-gradient(circle, #6d28d9 0%, transparent 70%); animation-duration: 12s; }
         .orb-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, #1d4ed8 0%, transparent 70%); animation-duration: 15s; animation-delay: -5s; }
-        .bg-hero-grid {
-            position: absolute; inset: 0; z-index: -1;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px; mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
-        }
+        
         @keyframes orbFloat { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(20px, 40px) scale(1.05); } }
 
-        /* --- METEORS --- */
-        .bg-meteor-container {
-            position: absolute; inset: 0; background: linear-gradient(135deg, #1a0b2e 0%, #000000 100%); overflow: hidden; z-index: -2;
-        }
-        .meteor {
-            position: absolute; width: 100px; height: 2px;
-            background: linear-gradient(90deg, #ffffff, #a855f7, transparent); opacity: 0;
-            filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.8)); transform: rotate(-45deg); z-index: -1;
-        }
-        @keyframes meteorFall {
-            0% { opacity: 1; transform: translate(50px, -50px) rotate(-45deg); }
-            100% { opacity: 0; transform: translate(-100vw, 100vh) rotate(-45deg); }
-        }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-input { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease; color: white; text-align: center; }
+        .glass-input:focus { background: rgba(0, 0, 0, 0.5); border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); outline: none; }
 
-        /* --- GAME BG --- */
-        .bg-game-deep {
-            background: radial-gradient(circle at center, #1e1b4b 0%, #000000 100%); position: absolute; inset: 0; z-index: -2;
-        }
-        .particle {
-            position: absolute; background: rgba(168, 85, 247, 0.2); border-radius: 50%;
-            animation: floatParticle 20s infinite linear;
-        }
-        @keyframes floatParticle { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-100vh); opacity: 0; } }
-
-        /* --- UTILS --- */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-        .glass-input {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        .glass-input:focus {
-            background: rgba(0, 0, 0, 0.5);
-            border-color: #a855f7;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
-        }
+        .crt-scanline { background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 50; position: absolute; inset: 0; opacity: 0.15; }
         
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        
-        .crt-scanline {
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 50; position: absolute; inset: 0; opacity: 0.15;
-        }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #a855f7; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(168,85,247,0.8); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 2px; }
-        
-        .animate-slideDown { animation: slideDown 0.4s ease-out forwards; }
-        .animate-slideUp { animation: slideUp 0.5s ease-out forwards; }
-        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .pulse-border { animation: pulseBorder 2s infinite; }
+        @keyframes pulseBorder { 0% { border-color: rgba(168, 85, 247, 0.3); } 50% { border-color: rgba(168, 85, 247, 0.8); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); } 100% { border-color: rgba(168, 85, 247, 0.3); } }
+
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #10b981; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
+
+        /* Timer Bar Animation */
+        @keyframes timerShrink { from { width: 100%; } to { width: 0%; } }
+        .timer-bar { height: 4px; background: #ef4444; border-radius: 2px; }
+        
+        .font-brand { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
 <body class="bg-[#0f0518] text-white h-screen w-screen overflow-hidden">
 
     <div id="root" class="h-full w-full"></div>
 
-    <audio id="bgAudio" loop>
-        <source src="sound/1.mp3" type="audio/mpeg">
-    </audio>
-
     <script type="text/babel">
-        const { useState, useEffect, useRef, useCallback, useMemo } = React;
+        const { useState, useEffect, useRef, useCallback } = React;
 
+        // --- AUDIO SYSTEM ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const soundSettings = {
+            sfx: true,
+            music: true
+        };
+
+        const playTone = (freq, type, duration, vol = 0.1) => {
+            if (!soundSettings.sfx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        };
+
+        let bgmInterval = null;
+        const startBgm = () => {
+            if (bgmInterval) clearInterval(bgmInterval);
+            if (!soundSettings.music) return;
+            
+            const notes = [261.63, 329.63, 392.00, 493.88, 523.25];
+            bgmInterval = setInterval(() => {
+                if (!soundSettings.music || audioCtx.state === 'suspended') return;
+                const note = notes[Math.floor(Math.random() * notes.length)];
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(note / 2, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 2);
+            }, 3000);
+        };
+
+        const stopBgm = () => {
+            if (bgmInterval) clearInterval(bgmInterval);
+        };
+
+        const SoundManager = {
+            click: () => playTone(800, 'sine', 0.1, 0.1),
+            correct: () => { playTone(1200, 'sine', 0.1, 0.1); setTimeout(() => playTone(1800, 'sine', 0.2, 0.1), 100); },
+            wrong: () => { playTone(150, 'sawtooth', 0.3, 0.1); setTimeout(() => playTone(100, 'sawtooth', 0.3, 0.1), 150); },
+            win: () => { 
+                if (!soundSettings.sfx) return;
+                [500, 600, 700, 800, 1000].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.1, 0.1), i * 100));
+            },
+            delete: () => { playTone(200, 'sawtooth', 0.2, 0.2); setTimeout(() => playTone(150, 'sawtooth', 0.4, 0.2), 200); },
+            updateSettings: (newSfx, newMusic) => {
+                soundSettings.sfx = newSfx;
+                soundSettings.music = newMusic;
+                if (newMusic) startBgm(); else stopBgm();
+            }
+        };
+
+        // --- ICONS ---
         const Icon = ({ name, size = 24, className, ...props }) => {
             if (!window.lucide || !window.lucide.icons) return null;
             const iconData = window.lucide.icons[name];
             if (!iconData) return null;
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
-                    {iconData.map((child, idx) => React.createElement(child[0], { key: idx, ...child[1] }))}
-                </svg>
-            );
+            return React.createElement('svg', {
+                xmlns: "http://www.w3.org/2000/svg", width: size, height: size, viewBox: "0 0 24 24",
+                fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round",
+                className: className, ...props
+            }, iconData.map((child, idx) => React.createElement(child[0], { key: idx, ...child[1] })));
         };
 
-        const AUDIO_SETTINGS = { sfxOn: true, musicOn: true };
-
-        // --- CONFIG ---
+        // --- DIFFICULTY CONFIG ---
         const DIFFICULTY_CONFIG = {
             EASY: { 
-                id: 'EASY', label: 'مبتدئ', subLabel: 'بداية الرحلة', icon: 'Sparkles',
-                multiplier: 1, timeFactor: 1.0, speedFactor: 1.0, 
-                color: 'text-emerald-400', bgGradient: 'from-emerald-900/40 to-emerald-900/10', border: 'border-emerald-500/30', glow: 'shadow-emerald-500/20',
-                mathRange: 10, gamePoints: { REFLEX: 30, COLOR: 50, MATH: 80, QUIZ: 550 }, timeBonus: { MATH: 5, COLOR: 2, REFLEX: 0 }
+                id: 'EASY', label: 'مبتدئ', subLabel: 'تدريب هادئ', icon: 'Baby', 
+                multiplier: 1, 
+                timeFactor: 1.3,
+                colorTimer: 4000, // 4 seconds per turn
+                color: 'text-emerald-400', border: 'border-emerald-500/50', bg: 'bg-emerald-500/10', 
+                mathRange: 10, gamePoints: { REFLEX: 30, COLOR: 50, MATH: 80 } 
             },
             MEDIUM: { 
-                id: 'MEDIUM', label: 'متوسط', subLabel: 'التحدي الحقيقي', icon: 'Zap',
-                multiplier: 1.5, timeFactor: 0.66, speedFactor: 1.5, 
-                color: 'text-amber-400', bgGradient: 'from-amber-900/40 to-amber-900/10', border: 'border-amber-500/30', glow: 'shadow-amber-500/20',
-                mathRange: 50, gamePoints: { REFLEX: 50, COLOR: 50, MATH: 100, QUIZ: 650 }, timeBonus: { MATH: 3, COLOR: 1.5, REFLEX: 0 }
+                id: 'MEDIUM', label: 'متوسط', subLabel: 'التحدي القياسي', icon: 'Swords', 
+                multiplier: 1.5, 
+                timeFactor: 1.0,
+                colorTimer: 2500, // 2.5 seconds per turn
+                color: 'text-amber-400', border: 'border-amber-500/50', bg: 'bg-amber-500/10', 
+                mathRange: 50, gamePoints: { REFLEX: 50, COLOR: 70, MATH: 100 } 
             },
             HARD: { 
-                id: 'HARD', label: 'صعب', subLabel: 'للمحترفين فقط', icon: 'Flame',
-                multiplier: 2, timeFactor: 0.5, speedFactor: 2.0, 
-                color: 'text-rose-500', bgGradient: 'from-rose-900/40 to-rose-900/10', border: 'border-rose-500/30', glow: 'shadow-rose-500/20',
-                mathRange: 99, gamePoints: { REFLEX: 60, COLOR: 50, MATH: 120, QUIZ: 750 }, timeBonus: { MATH: 2, COLOR: 1, REFLEX: 0 }
+                id: 'HARD', label: 'صعب', subLabel: 'للمحترفين', icon: 'Flame', 
+                multiplier: 2, 
+                timeFactor: 0.7,
+                colorTimer: 1500, // 1.5 seconds per turn
+                color: 'text-rose-500', border: 'border-rose-500/50', bg: 'bg-rose-500/10', 
+                mathRange: 100, gamePoints: { REFLEX: 80, COLOR: 100, MATH: 150 } 
             }
         };
 
-        const GAMES_LIST = [
-            { id: 'REFLEX', name: 'رد الفعل', icon: 'MousePointer2', desc: 'تجنب القنابل بسرعة!', color: 'from-red-500 to-rose-700', border: 'group-hover:border-red-500', shadow: 'hover:shadow-red-500/50', hasLives: true },
-            { id: 'MATH', name: 'تحدي الحساب', icon: 'Calculator', desc: 'اجمع واطرح قبل الوقت', color: 'from-cyan-500 to-blue-700', border: 'group-hover:border-cyan-500', shadow: 'hover:shadow-cyan-500/50', hasLives: true },
-            { id: 'COLOR', name: 'خداع الألوان', icon: 'Palette', desc: 'لا تدع عينك تخدعك', color: 'from-pink-500 to-fuchsia-700', border: 'group-hover:border-pink-500', shadow: 'hover:shadow-pink-500/50', hasLives: true },
-            { id: 'QUIZ', name: 'ثقافة عمان', icon: 'Brain', desc: 'اختبر معلوماتك العامة', color: 'from-blue-600 to-indigo-800', border: 'group-hover:border-blue-500', shadow: 'hover:shadow-blue-500/50', hasLives: true },
-        ];
-
-        const playSound = (type) => {
-            if (!AUDIO_SETTINGS.sfxOn) return;
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                const now = ctx.currentTime;
-                const sounds = {
-                    click: () => { osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1); gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); },
-                    correct: () => { osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1); gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0.2, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4); },
-                    bonus: () => { osc.type = 'square'; osc.frequency.setValueAtTime(800, now); osc.frequency.setValueAtTime(1200, now + 0.1); gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); },
-                    wrong: () => { osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.2); gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); },
-                    pop: () => { osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05); gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05); osc.start(now); osc.stop(now + 0.05); },
-                    win: () => { osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.linearRampToValueAtTime(800, now + 0.3); gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0.3, now + 0.2); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6); osc.start(now); osc.stop(now + 0.6); },
-                    break: () => { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(20, now + 0.3); gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); }
-                };
-                if(sounds[type]) sounds[type]();
-            } catch(e) { }
-        };
-
-        const Button = ({ children, onClick, variant="primary", className="", ...props }) => {
+        // --- SHARED COMPONENTS ---
+        const Button = ({ children, onClick, variant="primary", className="", disabled=false, ...props }) => {
             const styles = {
-                primary: `bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/30 border border-white/10 active:scale-[0.98]`,
-                success: `bg-emerald-600 text-white active:scale-95`,
-                error: `bg-rose-600 text-white active:scale-95`,
-                neutral: "bg-slate-700 text-slate-200 active:scale-95",
-                ghost: "bg-transparent text-purple-300 hover:text-white hover:bg-white/5 border border-white/10"
+                primary: `bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg active:scale-95 border-t border-white/10`,
+                success: `bg-emerald-600 text-white active:scale-95 border-t border-white/10`,
+                error: `bg-rose-600 text-white active:scale-95 border-t border-white/10`,
+                ghost: "bg-transparent text-purple-300 hover:text-white border border-white/10 hover:bg-white/5"
             };
             return (
                 <button 
-                    onClick={(e) => { playSound('click'); onClick && onClick(e); }}
-                    className={`w-full py-4 rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-2 select-none ${styles[variant]} ${className}`}
+                    onClick={(e) => { SoundManager.click(); onClick(e); }} disabled={disabled}
+                    className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 select-none ${styles[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     {...props}
                 >
                     {children}
@@ -205,117 +193,17 @@
             );
         };
 
-        const MusicController = ({ volume, setVolume, color="text-white" }) => (
-            <div className="flex items-center gap-2 w-full">
-                <Icon name="Volume1" size={16} className={color} />
-                <input type="range" min="0" max="1" step="0.05" value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))} className="flex-1" />
-                <Icon name="Volume2" size={16} className={color} />
-            </div>
-        );
-
-        const SettingsModal = ({ isOpen, onClose, audioSettings, setAudioSettings, globalVolume, setGlobalVolume }) => {
-            const [confirmStep, setConfirmStep] = useState(false);
-            const [inputValue, setInputValue] = useState("");
-            
-            if (!isOpen) return null;
-
-            const handleClearData = () => {
-                if (inputValue === "حذف") {
-                    localStorage.removeItem('eventPlusLeaderboardAR');
-                    setConfirmStep(false);
-                    setInputValue("");
-                    playSound('break');
-                    onClose(); 
-                } else {
-                    playSound('wrong');
-                }
-            };
-
-            return (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in p-4">
-                    <div className="glass-panel p-6 rounded-3xl w-full max-w-sm relative">
-                        <button onClick={onClose} className="absolute top-4 left-4 p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors"><Icon name="X" /></button>
-                        <h2 className="text-2xl font-bold mb-8 text-center flex items-center justify-center gap-2"><Icon name="Settings" /> الإعدادات</h2>
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
-                                <div className="flex items-center gap-3"><Icon name={audioSettings.musicOn ? "Music" : "Music2"} className="text-purple-400" /><span>الموسيقى</span></div>
-                                <button onClick={() => setAudioSettings(prev => ({...prev, musicOn: !prev.musicOn}))} className={`w-12 h-6 rounded-full p-1 transition-colors ${audioSettings.musicOn ? 'bg-green-500' : 'bg-slate-600'}`}><div className={`w-4 h-4 bg-white rounded-full transition-transform ${audioSettings.musicOn ? 'translate-x-0' : '-translate-x-6'}`}></div></button>
-                            </div>
-                            <div className="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
-                                <div className="flex items-center gap-3"><Icon name={audioSettings.sfxOn ? "Volume2" : "VolumeX"} className="text-pink-400" /><span>المؤثرات (SFX)</span></div>
-                                <button onClick={() => { AUDIO_SETTINGS.sfxOn = !audioSettings.sfxOn; setAudioSettings(prev => ({...prev, sfxOn: !prev.sfxOn})); }} className={`w-12 h-6 rounded-full p-1 transition-colors ${audioSettings.sfxOn ? 'bg-green-500' : 'bg-slate-600'}`}><div className={`w-4 h-4 bg-white rounded-full transition-transform ${audioSettings.sfxOn ? 'translate-x-0' : '-translate-x-6'}`}></div></button>
-                            </div>
-                            
-                            <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col gap-3">
-                                <div className="flex items-center gap-2 text-white/70 text-sm"><Icon name="Sliders" size={14} /> مستوى الصوت</div>
-                                <MusicController volume={globalVolume} setVolume={setGlobalVolume} />
-                            </div>
-
-                            <div className="pt-2">
-                                {!confirmStep ? (
-                                    <button onClick={() => setConfirmStep(true)} className="w-full p-4 rounded-xl font-bold bg-red-900/20 text-red-400 border border-red-500/20 hover:bg-red-900/40 transition-all flex items-center justify-center gap-2"><Icon name="Trash2" size={18} /> مسح سجل الصدارة</button>
-                                ) : (
-                                    <div className="flex flex-col gap-2 bg-red-900/10 p-3 rounded-2xl border border-red-500/20">
-                                        <p className="text-xs text-red-300 text-center">اكتب "حذف" للتأكيد</p>
-                                        <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="w-full p-3 rounded-xl bg-black/40 border border-red-500/30 text-center focus:outline-none focus:border-red-500" placeholder="حذف" />
-                                        <button onClick={handleClearData} disabled={inputValue !== "حذف"} className={`w-full p-3 rounded-xl font-bold transition-all ${inputValue === "حذف" ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' : 'bg-white/5 text-white/30'}`}>تأكيد الحذف</button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+        const Toggle = ({ label, checked, onChange }) => (
+            <div className="flex items-center justify-between w-full bg-white/5 p-4 rounded-xl border border-white/10 mb-3">
+                <span className="font-bold text-lg">{label}</span>
+                <div className="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in" onClick={() => onChange(!checked)}>
+                    <div className={`block overflow-hidden h-6 rounded-full cursor-pointer transition-colors ${checked ? 'bg-emerald-500' : 'bg-gray-700'}`}></div>
+                    <div className={`absolute block w-6 h-6 rounded-full bg-white border-4 border-transparent shadow inset-y-0 left-0 transition-transform ${checked ? 'translate-x-full transform' : ''}`}></div>
                 </div>
-            );
-        };
-
-        const MusicPlayer = ({ isInGame, volume, enabled }) => {
-            const audioRef = useRef(null);
-            
-            useEffect(() => {
-                const initAudio = () => {
-                    if (audioRef.current && audioRef.current.paused && enabled) {
-                        audioRef.current.play().catch(e => console.log("Audio autoplay restricted"));
-                    }
-                };
-                document.addEventListener('click', initAudio, { once: true });
-                document.addEventListener('touchstart', initAudio, { once: true });
-                return () => {
-                    document.removeEventListener('click', initAudio);
-                    document.removeEventListener('touchstart', initAudio);
-                };
-            }, [enabled]);
-
-            useEffect(() => {
-                audioRef.current = document.getElementById('bgAudio');
-                if(audioRef.current && !enabled) audioRef.current.pause();
-                else if(audioRef.current && enabled) audioRef.current.play().catch(e=>{});
-            }, [enabled]);
-
-            useEffect(() => {
-                const audio = audioRef.current;
-                if (!audio || !enabled) return;
-                const targetVolume = isInGame ? (volume * 0.5) : volume; 
-                if (Math.abs(audio.volume - targetVolume) < 0.01) { audio.volume = targetVolume; return; }
-                const fadeInterval = setInterval(() => {
-                    const currentVolume = audio.volume;
-                    const diff = targetVolume - currentVolume;
-                    if (Math.abs(diff) < 0.02) { audio.volume = targetVolume; clearInterval(fadeInterval); }
-                    else { audio.volume = diff > 0 ? Math.min(1, currentVolume + 0.02) : Math.max(0, currentVolume - 0.02); }
-                }, 50);
-                return () => clearInterval(fadeInterval);
-            }, [isInGame, volume, enabled]);
-            return null;
-        };
-
-        const Footer = () => (
-            <div className="fixed bottom-0 left-0 w-full z-40 bg-[#0f0518]/90 backdrop-blur-md border-t border-white/10 p-3 flex flex-wrap justify-center items-center gap-4 text-xs sm:text-sm">
-                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5"><span className="text-purple-400 font-bold uppercase tracking-wider">المطور الرئيسي</span><span className="flex items-center gap-1 text-white" dir="ltr"><Icon name="Instagram" size={14} /> @eventplus.om</span></div>
-                <div className="w-px h-4 bg-white/10 hidden sm:block"></div>
-                <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5"><span className="text-pink-400 font-bold uppercase tracking-wider">للطلب و الاستفسار</span><span className="flex items-center gap-1 text-white" dir="ltr"><Icon name="Phone" size={14} /> +968 77220363</span></div>
             </div>
         );
 
-        // --- COPYRIGHT COMPONENT (Adjusted Position) ---
+        // --- COPYRIGHT COMPONENT ---
         const CopyrightBadge = () => (
             <div className="fixed bottom-14 left-4 z-50 bg-[#1a0b2e]/90 backdrop-blur-xl border border-white/10 p-2 pr-4 rounded-2xl flex items-center gap-3 shadow-2xl shadow-purple-900/20 animate-slideUp">
                 <img 
@@ -331,655 +219,442 @@
             </div>
         );
 
-        const VirtualKeyboard = ({ onChar, onDelete, onEnter, isVisible }) => {
-            if (!isVisible) return null;
-            const rows = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['ض', 'ص', 'ث', 'ق', 'ف', 'غ', 'ع', 'ه', 'خ', 'ح', 'ج', 'د'], ['ش', 'س', 'ي', 'ب', 'ل', 'ا', 'ت', 'ن', 'م', 'ك', 'ط'], ['ذ', 'ئ', 'ء', 'ؤ', 'ر', 'لا', 'ى', 'ة', 'و', 'ز', 'ظ'], ['SPACE', 'DEL', 'ENTER']];
-            return (
-                <div className="absolute top-0 left-0 w-full bg-slate-900/95 border-b-2 border-purple-500/50 p-2 z-50 shadow-2xl backdrop-blur-md animate-slideDown">
-                    <div className="flex flex-col gap-2 max-w-4xl mx-auto">
-                        {rows.map((row, i) => (
-                            <div key={i} className="flex justify-center gap-1">
-                                {row.map((key) => {
-                                    if (key === 'SPACE') return <button key={key} onClick={() => onChar(' ')} className="h-12 flex-1 max-w-[200px] bg-slate-700 rounded-lg text-white font-bold border border-white/10">مسافة</button>;
-                                    if (key === 'DEL') return <button key={key} onClick={onDelete} className="h-12 w-20 bg-red-900/50 rounded-lg text-white font-bold border border-white/10 flex items-center justify-center"><Icon name="Delete" size={20} /></button>;
-                                    if (key === 'ENTER') return <button key={key} onClick={onEnter} className="h-12 w-24 bg-green-600 rounded-lg text-white font-bold border border-white/10">تأكيد</button>;
-                                    return <button key={key} onClick={() => onChar(key)} className="h-12 w-10 sm:w-12 bg-slate-700 rounded-lg text-white font-bold text-lg border border-white/10 shadow-sm">{key}</button>;
-                                })}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        };
-
-        const HeartUnit = ({ broken }) => (
-            <div className={`relative w-6 h-6 transition-all duration-300 ${broken ? 'opacity-50' : 'opacity-100'}`}>
-                {broken ? <div className="animate-heart-break absolute inset-0 text-gray-500"><Icon name="HeartCrack" size={24} fill="currentColor" /></div> : <Icon name="Heart" size={24} className="text-red-500 fill-red-500 drop-shadow-glow" />}
+        const Footer = () => (
+            <div className="fixed bottom-0 left-0 w-full z-40 bg-[#0f0518]/90 backdrop-blur-md border-t border-white/10 p-3 flex flex-wrap justify-center items-center gap-4 text-xs sm:text-sm">
+                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5"><span className="text-purple-400 font-bold uppercase tracking-wider">المطور الرئيسي</span><span className="flex items-center gap-1 text-white" dir="ltr"><Icon name="Instagram" size={14} /> @eventplus.om</span></div>
+                <div className="w-px h-4 bg-white/10 hidden sm:block"></div>
+                <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5"><span className="text-pink-400 font-bold uppercase tracking-wider">للطلب و الاستفسار</span><span className="flex items-center gap-1 text-white" dir="ltr"><Icon name="Phone" size={14} /> +968 77220363</span></div>
             </div>
         );
 
-        const LivesDisplay = ({ maxLives, currentLives }) => (
-            <div className="flex gap-2 bg-black/40 p-2 rounded-full backdrop-blur-sm border border-white/10">
-                {[...Array(maxLives)].map((_, i) => (<HeartUnit key={i} broken={i >= currentLives} />))}
-            </div>
-        );
-
-        const GameMath = ({ diff, onScore, onEnd, onLifeLost }) => {
-            const [problem, setProblem] = useState(null);
-            const [timeLeft, setTimeLeft] = useState(20 * diff.timeFactor);
-            const [streak, setStreak] = useState(0);
-
-            const generateProblem = useCallback(() => {
-                const range = diff.mathRange;
-                const isAddition = Math.random() > 0.5;
-                let n1 = Math.floor(Math.random() * range) + 1;
-                let n2 = Math.floor(Math.random() * range) + 1;
-                if (!isAddition && n1 < n2) [n1, n2] = [n2, n1];
-                const ans = isAddition ? n1 + n2 : n1 - n2;
-                let wrong1 = ans + Math.floor(Math.random() * 5) + 1;
-                let wrong2 = ans - Math.floor(Math.random() * 5) - 1;
-                if (wrong2 < 0) wrong2 = ans + 2; 
-                setProblem({ n1, n2, op: isAddition ? '+' : '-', ans, options: [ans, wrong1, wrong2].sort(() => Math.random() - 0.5) });
-            }, [diff]);
-
+        // --- HOOKS ---
+        const useFairTimer = (initialTime, onEnd, isActive = true) => {
+            const [timeLeft, setTimeLeft] = useState(initialTime);
+            const endTimeRef = useRef(null);
             useEffect(() => {
-                generateProblem();
-                const timer = setInterval(() => { setTimeLeft(t => { if(t <= 0) { clearInterval(timer); onEnd(); return 0; } return t - 0.1; }); }, 100);
-                return () => clearInterval(timer);
-            }, [generateProblem]);
-
-            const handleAnswer = (val) => {
-                if (val === problem.ans) {
-                    let pts = diff.gamePoints.MATH;
-                    if (streak >= 2) { pts = Math.floor(pts * 1.5); playSound('bonus'); } else playSound('correct');
-                    setTimeLeft(prev => Math.min(prev + diff.timeBonus.MATH, 30)); 
-                    onScore(pts); setStreak(s=>s+1); generateProblem();
-                } else { playSound('wrong'); onLifeLost(); setStreak(0); generateProblem(); }
-            };
-            if (!problem) return null;
-            return (
-                <div className="flex flex-col items-center justify-center h-full gap-8">
-                     <div className="flex justify-between w-full px-8"><div className="text-xl text-white/70">احسب بسرعة!</div><div className="text-xl font-mono text-yellow-400">{Math.ceil(timeLeft)}ث</div></div>
-                    <div className="flex items-center gap-4 text-7xl font-black text-white"><span>{problem.n1}</span><span className="text-purple-400">{problem.op}</span><span>{problem.n2}</span><span className="text-white/50">=</span><span className="text-yellow-400">?</span></div>
-                    <div className="grid grid-cols-3 gap-4 w-full max-w-lg px-4 mt-8">{problem.options.map((opt, i) => (<Button key={i} onClick={() => handleAnswer(opt)} variant="neutral" className="text-3xl aspect-[4/3] h-auto">{opt}</Button>))}</div>
-                </div>
-            );
-        };
-
-        const GameQuiz = ({ diff, onScore, onEnd, onLifeLost }) => {
-            const [questions, setQuestions] = useState([]);
-            const [qIdx, setQIdx] = useState(0);
-            const [timeLeft, setTimeLeft] = useState(15 * diff.timeFactor);
-            const QUESTIONS_DB = {
-            EASY: [
-                {q: "هيش هي عاصمة السلطنة؟", a: ["مسقط", "صلالة", "صحار"], c: "مسقط"},
-                {q: "ويش العملة اللي نستخدمها في عمان؟", a: ["الريال العماني", "الدينار", "الدرهم"], c: "الريال العماني"},
-                {q: "منهو السلطان الحالي الله يحفظه؟", a: ["هيثم بن طارق", "قابوس بن سعيد", "سعيد بن تيمور"], c: "هيثم بن طارق"},
-                {q: "الخنجر في العلم لونه هيش؟", a: ["أبيض", "أحمر", "أخضر"], c: "أبيض"},
-                {q: "الجبل اللي يزرعون فيه رمان وورد? ", a: ["الجبل الأخضر", "شمس", "الكور"], c: "الجبل الأخضر"},
-                {q: "هيش أشهر حلوى نقدمها للضيف؟", a: ["الحلوى العمانية", "البقلاوة", "الكنافة"], c: "الحلوى العمانية"},
-                {q: "وين يصير مهرجان الخريف؟", a: ["صلالة", "صور", "نزوى"], c: "صلالة"},
-                {q: "ويش الرمز الموجود في علمنا؟", a: ["الخنجر والسيفين", "النخلة", "الصقر"], c: "الخنجر والسيفين"},
-                {q: "الرجال عندنا هيش يلبسون؟", a: ["دشداشة", "ثوب", "جلابية"], c: "دشداشة"},
-                {q: "اللي ينحط على الراس في الرسميات هيش يسمونه؟", a: ["مصر", "غترة", "شماغ"], c: "مصر"},
-                {q: "والقبعة المطرزة هيش اسمها؟", a: ["كمة", "طاقية", "عمة"], c: "كمة"},
-                {q: "الحيوان اللي يعتبر رمز للمحميات عندنا؟", a: ["المها العربي", "النمر", "الفيل"], c: "المها العربي"},
-                {q: "شجرة اللبان وين تكثر؟", a: ["ظفار", "مسقط", "الباطنة"], c: "ظفار"},
-                {q: "أكبر مطار في عمان هيش اسمه؟", a: ["مطار مسقط", "مطار دبي", "مطار الدوحة"], c: "مطار مسقط"},
-                {q: "بحرنا من صوب الشرق هيش اسمه؟", a: ["بحر العرب", "البحر الأحمر", "المتوسط"], c: "بحر العرب"},
-                {q: "من جيرانا من صوب الغرب؟", a: ["الإمارات والسعودية", "الكويت", "العراق"], c: "الإمارات والسعودية"},
-                {q: "ديانتنا الرسمية هيش؟", a: ["الاسلام", "المسيحية", "الهندوسية"], c: "الاسلام"},
-                {q: "بأي لغة نتكلم في الدوائر الحكومية؟", a: ["العربية", "الإنجليزية", "الأردية"], c: "العربية"},
-                {q: "أكبر محافظة ف المساحة هيش هي؟", a: ["الوسطى", "مسقط", "مسندم"], c: "الوسطى"},
-                {q: "يوم النهضة 23 يوليو كان ف عهد منهو؟", a: ["السلطان قابوس", "السلطان هيثم", "السلطان سعيد"], c: "السلطان قابوس"},
-                {q: "الأكلة اللي ندفنها في الأرض أيام العيد هيش؟", a: ["الشواء", "المكبوس", "الهريس"], c: "الشواء"},
-                {q: "طيران بلادنا هيش اسمه؟", a: ["الطيران العماني", "طيران الخليج", "الإماراتية"], c: "الطيران العماني"},
-                {q: "كم لون في علم عمان غير الشعار؟", a: ["ثلاثة", "أربعة", "اثنين"], c: "ثلاثة"},
-                {q: "القهوة عندنا رمز لويش؟", a: ["الضيافة والكرم", "التجارة", "الزراعة"], c: "الضيافة والكرم"},
-                {q: "ميناء مسقط القديم هيش اسمه؟", a: ["ميناء مطرح", "صحار", "صلالة"], c: "ميناء مطرح"},
-                {q: "السوق الشعبي المعروف ف مسقط؟", a: ["سوق مطرح", "سوق المباركية", "واقف"], c: "سوق مطرح"},
-                {q: "سفننا القديمة هيش يسمونها؟", a: ["الداو", "اليخوت", "العبارات"], c: "الداو"},
-                {q: "يوم نسلم على حد هيش نقول؟", a: ["السلام عليكم", "مرحباً", "صباح الخير"], c: "السلام عليكم"},
-                {q: "الفاكهة اللي نزرعها وايد وتجي من النخل؟", a: ["الرطب/التمر", "فراولة", "أناناس"], c: "الرطب/التمر"},
-                {q: "السمكة الصغيرة اللي نجففها وتكثر عندنا؟", a: ["العومة", "سلمون", "قرش"], c: "العومة"}
-            ],
-            MEDIUM: [
-                {q: "الري مال الأولين هيش يسمونه؟", a: ["الأفلاج", "الآبار", "السدود"], c: "الأفلاج"},
-                {q: "أعلى جبل في عمان وين؟", a: ["جبل شمس", "الجبل الأخضر", "سمحان"], c: "جبل شمس"},
-                {q: "وين تقع القلعة الكبيرة المدورة (الشهباء)؟", a: ["نزوى", "صحار", "صور"], c: "نزوى"},
-                {q: "القلعة اللي سورها طويل ومسجلة ف اليونسكو؟", a: ["قلعة بهلاء", "نخل", "الحزم"], c: "قلعة بهلاء"},
-                {q: "المضيق اللي نطل عليه ويتحكم ف التجارة؟", a: ["مضيق هرمز", "باب المندب", "جبل طارق"], c: "مضيق هرمز"},
-                {q: "الولاية اللي يصنعون فيها سفن الخشب؟", a: ["صور", "قريات", "بركاء"], c: "صور"},
-                {q: "الوادي اللي مايه أخضر طول السنة ف الشرقية؟", a: ["وادي بني خالد", "وادي غول", "الجزي"], c: "وادي بني خالد"},
-                {q: "الجبل اللي يزرعون فيه رمان وورد? ", a: ["الجبل الأخضر", "شمس", "الكور"], c: "الجبل الأخضر"},
-                {q: "جزيرة السلاحف هيش اسمها؟", a: ["مصيرة", "الحلانيات", "الفحل"], c: "مصيرة"},
-                {q: "دار الأوبرا وين مكانها بالضبط؟", a: ["القرم", "مطرح", "الخوير"], c: "القرم"},
-                {q: "سد وادي ضيقة وين مكانه؟", a: ["قريات", "العامرات", "بدبد"], c: "قريات"},
-                {q: "أكبر كهف ف عمان (مجلس الجن) وين؟", a: ["هضبة سلماه/قريات", "نزوى", "عبري"], c: "هضبة سلماه/قريات"},
-                {q: "السفينة اللي راحت لين الصين هيش اسمها؟", a: ["سفينة صحار", "جوهرة مسقط", "مجان"], c: "سفينة صحار"},
-                {q: "المحافظة المفصوله عنا فوق صوب الشمال؟", a: ["مسندم", "البريمي", "الظاهرة"], c: "مسندم"},
-                {q: "الفن اللي يلعبون فيه بالسيف والعصا؟", a: ["الرزحة", "الميدان", "التغرود"], c: "الرزحة"},
-                {q: "عين حارة ف الرستاق هيش اسمها؟", a: ["عين الكسفة", "الثوارة", "أرزات"], c: "عين الكسفة"},
-                {q: "وعين حارة ف نخل؟", a: ["الثوارة", "الكسفة", "حمران"], c: "الثوارة"},
-                {q: "مدينتنا اللي كانوا يسمونها دهليز الصين؟", a: ["صحار", "مسقط", "قلهات"], c: "صحار"},
-                {q: "المنطقة الاقتصادية الجديدة فالوسطى؟", a: ["الدقم", "هيماء", "محوت"], c: "الدقم"},
-                {q: "القلاع اللي تحرس مسقط القديمة؟", a: ["الجلالي والميراني", "نزوى وبهلاء", "الحزم والرستاق"], c: "الجلالي والميراني"},
-                {q: "متحف مشهور ف مسقط القديمة؟", a: ["بيت الزبير", "الوطني", "الطفل"], c: "بيت الزبير"},
-                {q: "اسم ظفار الأولي هيش كان؟", a: ["الأحقاف", "مجان", "مزون"], c: "الأحقاف"},
-                {q: "خبزنا العماني الخفيف هيش نسميه؟", a: ["خبز رخال", "تنور", "شباتي"], c: "خبز رخال"},
-                {q: "سوق الغنم قبل العيد هيش نسميه؟", a: ["الهبطة", "الحراج", "المزاد"], c: "الهبطة"},
-                {q: "أول سفينة راحت أمريكا؟", a: ["سلطانة", "صحار", "الرحماني"], c: "سلطانة"},
-                {q: "جزر فيها شعاب مرجانية ف مسقط؟", a: ["الديمانيات", "الحلانيات", "مصيرة"], c: "الديمانيات"},
-                {q: "الوادي اللي لازم تركب قارب عشان تدخله ف طيوي؟", a: ["وادي شاب", "بني خروص", "الأبيض"], c: "وادي شاب"},
-                {q: "الصندوق الخشبي مال الملابس هيش نسميه؟", a: ["المندوس", "الصندوق", "السحارة"], c: "المندوس"},
-                {q: "وين يقع حصن الحزم؟", a: ["الرستاق", "المصنعة", "بركاء"], c: "الرستاق"},
-                {q: "وين يصلحون السفن الكبار (الحوض الجاف)؟", a: ["الدقم", "صحار", "صلالة"], c: "الدقم"}
-            ],
-            HARD: [
-                {q: "أي سنة طردنا البرتغاليين نهائياً؟", a: ["1650", "1507", "1741"], c: "1650"},
-                {q: "منهو مؤسس دولة البوسعيد؟", a: ["أحمد بن سعيد", "سلطان بن سيف", "سيف بن سلطان"], c: "أحمد بن سعيد"},
-                {q: "اسم عمان القديم (جبل النحاس) هيش هو؟", a: ["مجان", "مزون", "الغبيراء"], c: "مجان"},
-                {q: "ومعنى اسم (مزون) هيش؟", a: ["المياه الواجدة", "النحاس", "الجبل"], c: "المياه الواجدة"},
-                {q: "الملاح العماني الملقب بأسد البحار منهو؟", a: ["أحمد بن ماجد", "ناصر بن مرشد", "كعب بن زهير"], c: "أحمد بن ماجد"},
-                {q: "منهو الإمام اللي بنى قلعة نزوى؟", a: ["سلطان بن سيف", "ناصر بن مرشد", "بلعرب"], c: "سلطان بن سيف"},
-                {q: "وحصن جبرين الزين منهو بانيه؟", a: ["بلعرب بن سلطان", "سلطان بن سيف", "سيف بن سلطان"], c: "بلعرب بن سلطان"},
-                {q: "العالم اللي سوى علم العروض ومعجم العين؟", a: ["الخليل بن أحمد", "ابن دريد", "المبرد"], c: "الخليل بن أحمد"},
-                {q: "المدينة المفقودة ف الربع الخالي هيش اسمها؟", a: ["أوبار", "سمهرم", "البليد"], c: "أوبار"},
-                {q: "ميناء اللبان القديم ف ظفار؟", a: ["البليد", "مرباط", "سدح"], c: "البليد"},
-                {q: "المدينة التاريخية اللي دمرها الزلزال ف صور؟", a: ["قلهات", "طيوي", "رأس الحد"], c: "قلهات"},
-                {q: "قبر (بيبي مريم) وين محله؟", a: ["قلهات", "نزوى", "صحار"], c: "قلهات"},
-                {q: "أعمق فلج ف عمان ومسجل ف اليونسكو؟", a: ["فلج الملكي", "الجيلة", "دارس"], c: "فلج الملكي"},
-                {q: "أطول فلج عندنا هيش اسمه؟", a: ["فلج دارس", "الميسر", "الخطمين"], c: "فلج دارس"},
-                {q: "متى دخلت عمان الأمم المتحدة؟", a: ["1971", "1970", "1975"], c: "1971"},
-                {q: "الفن اللي فيه شعر وفخر وبدون طبول؟", a: ["العازي", "الهمبل", "الرزحة"], c: "العازي"},
-                {q: "مدافن شكلها مثل خلية النحل ف عبري وين؟", a: ["بات والخطم", "زكيت", "سمد"], c: "بات والخطم"},
-                {q: "السفينة العودة (الكبيرة) مالت المحيطات هيش يسمونها؟", a: ["الغانجة", "الهوري", "الشاشه"], c: "الغانجة"},
-                {q: "يوم المرأة العمانية أي تاريخ؟", a: ["17 أكتوبر", "18 نوفمبر", "8 مارس"], c: "17 أكتوبر"},
-                {q: "متى وقعوا اتفاقية السيب؟", a: ["1920", "1955", "1913"], c: "1920"},
-                {q: "أول جريدة عمانية ف زنجبار هيش كان اسمها؟", a: ["الفلق", "النجاح", "النهضة"], c: "النجاح"},
-                {q: "حصن السليف وين يقع؟", a: ["عبري", "مقشن", "أدم"], c: "عبري"},
-                {q: "الإمام اللي وحد البلاد وبدأ دولة اليعاربة؟", a: ["ناصر بن مرشد", "سلطان بن سيف", "مرشد"], c: "ناصر بن مرشد"},
-                {q: "موسم خراف الرطب هيش نسميه؟", a: ["القيظ", "الصرام", "الجداد"], c: "القيظ"},
-                {q: "القائد اللي حرر ممباسا وسموه (قيد الأرض)؟", a: ["سيف بن سلطان", "أحمد بن سعيد", "ثويني"], c: "سيف بن سلطان"},
-                {q: "البريمي ويش كان اسمها قبل؟", a: ["توام", "الجوف", "السر"], c: "توام"},
-                {q: "فن الحريم المعروف ف ظفار؟", a: ["الطبل", "الرزحة", "العازي"], c: "الطبل"},
-                {q: "المعاهدة مع بريطانيا عام 1839 هيش اسمها؟", a: ["الصداقة والتجارة", "الحماية", "مسقط"], c: "الصداقة والتجارة"},
-                {q: "حصن الأسود وين مكانه؟", a: ["عبري", "مقشن", "أدم"], c: "عبري"},
-                {q: "عاصمة عمان ف زمن السيد سعيد بن سلطان كانت مسقط و...؟", a: ["زنجبار", "مكران", "جوادور"], c: "زنجبار"}
-            ]
-        };
-            useEffect(() => {
-                const pool = QUESTIONS_DB[diff.id] || QUESTIONS_DB.EASY;
-                setQuestions(pool.sort(() => Math.random() - 0.5).slice(0, 5));
-                const timer = setInterval(() => { setTimeLeft(t => { if(t <= 0) { clearInterval(timer); onEnd(); return 0; } return t - 0.1; }); }, 100);
-                return () => clearInterval(timer);
-            }, [diff.id]);
-            const handleAns = (ans) => {
-                if(ans === questions[qIdx].c) { playSound('correct'); onScore(diff.gamePoints.QUIZ); }
-                else { playSound('wrong'); onLifeLost(); }
-                if(qIdx < questions.length - 1) { setQIdx(qIdx+1); setTimeLeft(15 * diff.timeFactor); } else onEnd();
-            };
-            if (questions.length === 0) return <div>جاري التحميل...</div>;
-            return (
-                <div className="flex flex-col h-full justify-center space-y-6">
-                    <div className="flex justify-between px-4"><span>سؤال {qIdx+1}</span><span className="text-yellow-400">{Math.ceil(timeLeft)}ث</span></div>
-                    <div className="bg-white/10 p-8 rounded-2xl text-2xl font-bold text-center">{questions[qIdx].q}</div>
-                    <div className="grid gap-4">{questions[qIdx].a.map((opt, i) => (<Button key={i} onClick={() => handleAns(opt)} variant="neutral">{opt}</Button>))}</div>
-                </div>
-            );
-        };
-
-        const GameReflex = ({ diff, onScore, onEnd, onLifeLost }) => {
-            const [active, setActive] = useState(null); 
-            const [timeLeft, setTimeLeft] = useState(30);
-            const [streak, setStreak] = useState(0); 
-            const timerRef = useRef(null);
-            const activeRef = useRef(null);
-            const mountedRef = useRef(true);
-
-            useEffect(() => {
-                mountedRef.current = true;
-                spawnTarget();
-                const gameTimer = setInterval(() => { setTimeLeft(t => { if(t<=0) { onEnd(); return 0; } return t-1; }); }, 1000);
-                return () => { mountedRef.current = false; clearInterval(gameTimer); clearTimeout(timerRef.current); };
-            }, []);
-            useEffect(() => { activeRef.current = active; }, [active]);
-
-            const spawnTarget = () => {
-                if (!mountedRef.current) return;
-                if(timerRef.current) clearTimeout(timerRef.current);
-                
-                const nextType = Math.random() > 0.3 ? 'TARGET' : 'BOMB';
-                const nextObj = { index: Math.floor(Math.random() * 9), type: nextType };
-                setActive(nextObj);
-                
-                const duration = 1000 / diff.speedFactor;
-                timerRef.current = setTimeout(() => { 
-                    if (mountedRef.current) {
-                        if (activeRef.current && activeRef.current.type === 'TARGET') {
-                            onLifeLost(); 
-                            playSound('break'); 
-                            setStreak(0);
-                        }
-                        setActive(null); 
-                        setTimeout(spawnTarget, 200);
+                if (!isActive) return;
+                endTimeRef.current = Date.now() + (initialTime * 1000);
+                const interval = setInterval(() => {
+                    const now = Date.now();
+                    const remaining = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
+                    setTimeLeft(remaining);
+                    if (remaining <= 0) {
+                        clearInterval(interval);
+                        if(onEnd) onEnd();
                     }
-                }, duration); 
+                }, 100);
+                return () => clearInterval(interval);
+            }, [isActive]);
+            return timeLeft;
+        };
+
+        // --- GAMES ---
+        const GameMath = ({ diff, onScore, onEnd, onLoseLife }) => {
+            const [problem, setProblem] = useState({ t: "0+0", a: 0 });
+            const [choices, setChoices] = useState([]);
+            const timeLeft = useFairTimer(60 * diff.timeFactor, onEnd);
+            const generate = useCallback(() => {
+                const range = diff.mathRange;
+                const n1 = Math.floor(Math.random() * range) + 1;
+                const n2 = Math.floor(Math.random() * range) + 1;
+                const isAdd = Math.random() > 0.5;
+                const ans = isAdd ? n1 + n2 : n1 - n2;
+                let w1 = ans + Math.floor(Math.random() * 5) + 1;
+                let w2 = ans - Math.floor(Math.random() * 5) - 1;
+                if (w1 === ans) w1++; if (w2 === ans) w2--;
+                setChoices([ans, w1, w2].sort(() => Math.random() - 0.5));
+                setProblem({ t: `${n1} ${isAdd ? '+' : '-'} ${n2}`, a: ans });
+            }, [diff]);
+            useEffect(() => { generate(); }, []);
+            const handleAnswer = (val) => {
+                if (val === problem.a) { SoundManager.correct(); onScore(Math.round(diff.gamePoints.MATH * diff.multiplier)); generate(); } 
+                else { SoundManager.wrong(); onLoseLife(); generate(); }
             };
-
-            const handleClick = (idx) => {
-                if (!active || idx !== active.index) return; 
-
-                if(active.type === 'TARGET') {
-                    let pts = diff.gamePoints.REFLEX;
-                    if(streak >= 3) { pts = Math.floor(pts * 1.5); playSound('bonus'); } else playSound('pop');
-                    onScore(pts); setStreak(s=>s+1);
-                    setActive(null); spawnTarget(); 
-                } else if (active.type === 'BOMB') {
-                    playSound('break'); 
-                    onLifeLost(); 
-                    setStreak(0); 
-                    setActive(null); spawnTarget();
-                }
-            };
-
             return (
-                <div className="flex flex-col items-center justify-center h-full w-full">
-                    <div className="flex justify-between w-full max-w-md px-4 mb-4">
-                         <div className="text-3xl font-mono text-yellow-400">{timeLeft}ث</div>
-                         {streak > 2 && <div className="text-green-400 font-bold animate-pulse">🔥 x{streak > 3 ? '2' : '1.5'}</div>}
-                    </div>
-                    {/* Responsive Grid Container */}
-                    <div className="grid grid-cols-3 gap-3 bg-white/5 p-4 rounded-2xl border border-white/10 w-full max-w-md aspect-square">
-                        {[...Array(9)].map((_, i) => (
-                            <button key={i} onClick={() => handleClick(i)} className={`w-full h-full aspect-square rounded-xl flex items-center justify-center bg-slate-800 scale-95 border border-white/5 overflow-hidden transition-colors hover:bg-slate-700`}>
-                                {active && active.index === i && (
-                                    <div className={`animate-bounceIn w-full h-full flex items-center justify-center`}>
-                                        {active.type === 'TARGET' ? (
-                                            <div className="w-[70%] h-[70%] bg-green-500 rounded-lg shadow-[0_0_15px_rgba(34,197,94,0.8)] border-4 border-green-300 animate-pulse"></div>
-                                        ) : (
-                                            <div className="relative w-[70%] h-[70%] bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(220,38,38,0.8)] border-4 border-red-400">
-                                                <Icon name="Bomb" size={32} className="text-black drop-shadow-sm absolute w-1/2 h-1/2" />
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="mt-4 text-center text-sm opacity-60">
-                        <p>اضغط <span className="text-green-400">■</span> بسرعة!</p>
-                        <p>تجنب <Icon name="Bomb" size={14} className="inline text-red-500"/> (تكسر القلب ولا تنقص النقاط)</p>
+                <div className="flex flex-col items-center justify-center h-full gap-8 animate-slideUp">
+                    <div className="text-2xl text-yellow-400 font-mono font-bold tracking-widest bg-black/30 px-6 py-2 rounded-full border border-yellow-500/30">{timeLeft}ث</div>
+                    <div className="text-7xl font-black text-white tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{problem.t}</div>
+                    <div className="grid grid-cols-3 gap-4 w-full px-6 max-w-lg">
+                        {choices.map((c, i) => <Button key={i} onClick={() => handleAnswer(c)} className="text-3xl h-24 bg-white/5 hover:bg-white/15 border border-white/20">{c}</Button>)}
                     </div>
                 </div>
             );
         };
 
-        const GameColor = ({ diff, onScore, onEnd, onLifeLost }) => {
-            const COLORS = [{ n: 'أحمر', h: 'text-red-500'}, { n: 'أزرق', h: 'text-blue-500'}, { n: 'أخضر', h: 'text-green-500'}, { n: 'أصفر', h: 'text-yellow-500'}];
-            const [current, setCurrent] = useState({ text: '', color: '', match: false });
-            const [timeLeft, setTimeLeft] = useState(20);
-            useEffect(() => { nextRound(); const t = setInterval(() => setTimeLeft(p => { if(p<=0){onEnd(); return 0;} return p-1; }), 1000); return () => clearInterval(t); }, []);
-            const nextRound = () => {
-                const tO = COLORS[Math.floor(Math.random() * 4)];
-                const cO = COLORS[Math.floor(Math.random() * 4)];
+        const GameColor = ({ diff, onScore, onEnd, onLoseLife }) => {
+            const COLORS = [{ name: "أحمر", code: "text-red-500" }, { name: "أزرق", code: "text-blue-500" }, { name: "أخضر", code: "text-green-500" }, { name: "أصفر", code: "text-yellow-500" }];
+            const [current, setCurrent] = useState({ text: "", color: "", isMatch: false });
+            const timeLeft = useFairTimer(45 * diff.timeFactor, onEnd);
+            
+            // Turn Key for per-color Timer
+            const [turnKey, setTurnKey] = useState(0);
+
+            const nextRound = useCallback(() => {
+                const textObj = COLORS[Math.floor(Math.random() * COLORS.length)];
+                const colorObj = COLORS[Math.floor(Math.random() * COLORS.length)];
                 const isMatch = Math.random() > 0.5;
-                if (isMatch) setCurrent({ text: tO.n, color: tO.h, match: true });
-                else { let fC = cO; while(fC.n === tO.n) fC = COLORS[Math.floor(Math.random() * 4)]; setCurrent({ text: tO.n, color: fC.h, match: false }); }
-            };
-            const handleChoice = (c) => {
-                if (c === current.match) { 
-                    playSound('correct'); 
-                    setTimeLeft(prev => Math.min(prev + diff.timeBonus.COLOR, 30));
-                    onScore(diff.gamePoints.COLOR); 
-                }
-                else { playSound('wrong'); onLifeLost(); }
+                setCurrent({ text: textObj.name, color: isMatch ? textObj.code : (COLORS.find(c => c.name !== textObj.name) || colorObj).code, isMatch });
+                setTurnKey(k => k + 1); // Reset turn timer
+            }, []);
+
+            // Per-turn timer logic (Applies to ALL difficulties)
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    // Time limit per color hit
+                    SoundManager.wrong();
+                    onLoseLife();
+                    nextRound();
+                }, diff.colorTimer); // Use the difficulty-specific color timer
+
+                return () => clearTimeout(timer);
+            }, [turnKey, diff, nextRound]);
+
+            useEffect(() => { nextRound(); }, []);
+            
+            const handleChoice = (choice) => {
+                if (choice === current.isMatch) { SoundManager.correct(); onScore(Math.round(diff.gamePoints.COLOR * diff.multiplier)); } 
+                else { SoundManager.wrong(); onLoseLife(); }
                 nextRound();
             };
+
             return (
-                <div className="flex flex-col items-center justify-center h-full gap-8">
-                    <div className={`text-6xl font-black ${current.color} drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-150`}>{current.text}</div>
-                    <div className="text-2xl font-mono text-yellow-400">{timeLeft}ث</div>
-                    <div className="flex gap-4 w-full px-8 max-w-lg"><Button onClick={() => handleChoice(true)} variant="success" className="flex-1 h-20 text-2xl">صح</Button><Button onClick={() => handleChoice(false)} variant="error" className="flex-1 h-20 text-2xl">خطأ</Button></div>
+                <div className="flex flex-col items-center justify-center h-full gap-10 animate-slideUp">
+                    <div className="text-2xl text-yellow-400 font-mono font-bold tracking-widest bg-black/30 px-6 py-2 rounded-full border border-yellow-500/30">{timeLeft}ث</div>
+                    <div className="text-center space-y-6 w-full max-w-md">
+                        <p className="text-gray-400 text-lg">هل يطابق المعنى اللون؟</p>
+                        <div className={`text-8xl font-black ${current.color} drop-shadow-2xl`}>{current.text}</div>
+                        
+                        {/* Per-Turn Timer Bar */}
+                        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden mt-4">
+                            <div key={turnKey} className="h-full bg-red-500" style={{ animation: `timerShrink ${diff.colorTimer}ms linear forwards` }}></div>
+                        </div>
+                    </div>
+                    <div className="flex gap-6 w-full px-8 max-w-md mt-4"><Button onClick={() => handleChoice(true)} variant="success" className="h-24 text-3xl">صح</Button><Button onClick={() => handleChoice(false)} variant="error" className="h-24 text-3xl">خطأ</Button></div>
                 </div>
             );
         };
 
-        const GameEngine = ({ gameId, difficulty, onExit, onAutoSave, onViewLeaderboard, onHome, volume, onOpenSettings }) => {
-            const [score, setScore] = useState(0);
-            const [isOver, setIsOver] = useState(false);
-            const [lives, setLives] = useState(3);
-            const config = DIFFICULTY_CONFIG[difficulty];
-            const gameData = GAMES_LIST.find(g => g.id === gameId);
-
-            useEffect(() => { if (isOver) { onAutoSave(score); playSound('win'); } }, [isOver]);
-
-            const handleScore = useCallback((pts) => { setScore(s => Math.max(0, s + pts)); }, []);
-            
-            const handleLifeLost = () => {
-                playSound('break'); 
-                setLives(prev => {
-                    const newLives = prev - 1;
-                    if(newLives <= 0) { handleEnd(); return 0; }
-                    return newLives;
-                });
-            };
-            const handleEnd = () => { setIsOver(true); };
-
-            if (isOver) {
-                return (
-                    <div className="flex flex-col items-center justify-center h-full animate-float space-y-6">
-                        {lives <= 0 ? <Icon name="Skull" size={80} className="text-red-500" /> : <Icon name="Trophy" size={80} className="text-yellow-400" />}
-                        <h2 className="text-4xl font-bold">{lives <= 0 ? 'انتهت اللعبة!' : 'النتيجة النهائية'}</h2>
-                        <div className="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">{score}</div>
-                        <div className="flex flex-col w-64 gap-3">
-                            <Button onClick={onViewLeaderboard} variant="success" className="w-full"><Icon name="List" size={20} /> لوحة الصدارة</Button>
-                            <Button onClick={() => onHome(score)} variant="error" className="w-full"><Icon name="LogOut" size={20} /> خروج</Button>
-                        </div>
-                    </div>
-                );
-            }
-
-            const props = { diff: config, onScore: handleScore, onEnd: handleEnd, onLifeLost: handleLifeLost };
-
-            return (
-                <div className="h-full w-full max-w-2xl mx-auto p-4 flex flex-col pb-16">
-                    <div className="flex justify-between items-center mb-4 bg-slate-800/80 backdrop-blur p-3 rounded-xl border border-white/10 shadow-lg relative">
-                         <button onClick={onOpenSettings} className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"><Icon name="Settings" size={20} /></button>
-                        <div className="flex gap-2 items-center">
-                            <Button onClick={handleEnd} variant="ghost" className="px-3 py-1 text-xs h-8">إنهاء</Button>
-                            {gameData?.hasLives && <LivesDisplay maxLives={3} currentLives={lives} />}
-                        </div>
-                        <div className="font-bold text-xl font-mono text-purple-300">{score} <span className="text-xs text-white/50">XP</span></div>
-                    </div>
-                    
-                    <div className={`flex-1 bg-slate-900/50 rounded-2xl border border-white/5 relative overflow-hidden p-2 shadow-inner ${lives <= 0 ? 'animate-shake' : ''}`}>
-                        {gameId === 'QUIZ' && <GameQuiz {...props} />}
-                        {gameId === 'REFLEX' && <GameReflex {...props} />}
-                        {gameId === 'COLOR' && <GameColor {...props} />}
-                        {gameId === 'MATH' && <GameMath {...props} />}
-                    </div>
-                </div>
-            );
-        };
-
-        const LeaderboardScreen = ({ onBack, currentName }) => {
-            const [data, setData] = useState([]);
+        const GameReflex = ({ diff, onScore, onEnd }) => {
+            const timeLeft = useFairTimer(30 * diff.timeFactor, onEnd);
+            const [targets, setTargets] = useState([]);
             useEffect(() => {
-                const saved = localStorage.getItem('eventPlusLeaderboardAR');
-                if (saved) setData(JSON.parse(saved));
+                const interval = setInterval(() => {
+                    const id = Date.now();
+                    const isBomb = Math.random() < 0.3;
+                    setTargets(p => [...p, { id, x: Math.random() * 70 + 15, y: Math.random() * 50 + 25, isBomb }]);
+                    setTimeout(() => setTargets(p => p.filter(t => t.id !== id)), 1500 / diff.multiplier);
+                }, 800 / diff.multiplier);
+                return () => clearInterval(interval);
+            }, [diff]);
+            const handleClick = (t) => {
+                if (t.isBomb) { SoundManager.wrong(); onScore(-50 * diff.multiplier); navigator.vibrate?.(200); } 
+                else { SoundManager.correct(); onScore(Math.round(diff.gamePoints.REFLEX * diff.multiplier)); }
+                setTargets(p => p.filter(i => i.id !== t.id));
+            };
+            return (
+                <div className="relative h-full w-full overflow-hidden animate-slideUp">
+                    <div className="absolute top-4 left-0 right-0 flex justify-center pointer-events-none"><div className="text-2xl text-yellow-400 font-mono font-bold tracking-widest bg-black/30 px-6 py-2 rounded-full border border-yellow-500/30">{timeLeft}ث</div></div>
+                    {targets.map(t => (
+                        <div key={t.id} onPointerDown={(e) => { e.stopPropagation(); handleClick(t); }} className={`absolute w-20 h-20 rounded-full flex items-center justify-center cursor-pointer transform hover:scale-105 active:scale-90 transition-transform duration-100 ${t.isBomb ? 'bg-gradient-to-br from-red-500 to-rose-700' : 'bg-gradient-to-br from-emerald-400 to-green-600'} shadow-xl border-4 border-white/20`} style={{ left: `${t.x}%`, top: `${t.y}%` }}>
+                            <Icon name={t.isBomb ? "Bomb" : "Target"} size={36} className="text-white" />
+                        </div>
+                    ))}
+                    <div className="absolute bottom-10 w-full text-center text-white/30 text-sm pointer-events-none">اضغط على الأهداف، تجنب القنابل!</div>
+                </div>
+            );
+        };
+
+        // --- SCREENS ---
+        const LeaderboardScreen = ({ onBack, currentScore }) => {
+            const [scores, setScores] = useState([]);
+            useEffect(() => {
+                const stored = JSON.parse(localStorage.getItem('festival_scores') || '[]');
+                setScores(stored.sort((a, b) => b.score - a.score).slice(0, 10));
             }, []);
             return (
-                <div className="h-full flex flex-col p-6 relative overflow-hidden pb-16">
-                     <div className="bg-game-deep"></div>
-                     <div className="relative z-10 flex flex-col h-full max-w-2xl mx-auto w-full">
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex flex-col">
-                                <h2 className="text-3xl font-bold flex items-center gap-3"><Icon name="Trophy" className="text-yellow-400" /><span>لوحة الصدارة</span></h2>
-                                <span className="text-sm text-white/60 mt-1">عدد المشاركين: {data.length}</span>
+                <div className="flex flex-col items-center h-full p-6 animate-slideUp w-full max-w-md mx-auto relative z-10">
+                    <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 mb-6">لوحة الشرف</h2>
+                    <div className="w-full bg-white/5 rounded-2xl border border-white/10 overflow-hidden mb-6 flex-1 max-h-[60vh] overflow-y-auto">
+                        {scores.map((s, i) => (
+                            <div key={i} className={`flex justify-between p-4 border-b border-white/5 ${s.score === currentScore ? 'bg-yellow-500/20' : ''}`}>
+                                <div className="flex gap-3"><span className="font-mono text-yellow-500 w-6">#{i+1}</span><span className="font-bold">{s.name}</span></div>
+                                <div className="font-mono text-emerald-400">{s.score}</div>
                             </div>
-                            <Button onClick={onBack} variant="ghost" className="p-2 rounded-full"><Icon name="X" /></Button>
-                        </div>
-                        <div className="flex-1 bg-slate-800/50 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden shadow-2xl relative">
-                            <div className="overflow-y-auto max-h-[60vh] no-scrollbar pb-10">
-                                {data.map((entry, idx) => (
-                                    <div key={idx} className={`grid grid-cols-4 p-4 border-b border-white/5 items-center`}>
-                                        <span className="font-bold text-yellow-400 text-center">#{idx+1}</span>
-                                        <span className="col-span-2">{entry.name}</span>
-                                        <span className="text-emerald-400 font-bold">{entry.score}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            {data.length > 10 && (
-                                <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-4 text-center text-xs text-white/50 animate-bounce">
-                                    إسحب لأسفل لرؤية المزيد
-                                </div>
-                            )}
-                        </div>
-                     </div>
+                        ))}
+                        {scores.length === 0 && <div className="p-8 text-center text-gray-500">لا توجد نتائج بعد</div>}
+                    </div>
+                    <Button onClick={onBack}>عودة</Button>
                 </div>
             );
         };
 
-        const App = () => {
-            const [screen, setScreen] = useState('START');
-            const [name, setName] = useState('');
-            const [diff, setDiff] = useState('MEDIUM');
-            const [showKeyboard, setShowKeyboard] = useState(false);
-            const [activeGame, setActiveGame] = useState(null);
-            
-            const [audioSettings, setAudioSettings] = useState({ musicOn: true, sfxOn: true });
-            const [globalVolume, setGlobalVolume] = useState(0.5);
-            const [showSettings, setShowSettings] = useState(false);
+        const NameEntryScreen = ({ onNext }) => {
+            const [name, setName] = useState("");
+            return (
+                <div className="flex flex-col items-center justify-center h-full gap-8 animate-slideUp p-6">
+                    <h2 className="text-3xl font-bold">سجل اسمك للتحدي</h2>
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="اسم اللاعب" className="glass-input w-full max-w-xs text-2xl py-4 rounded-xl" maxLength={15} />
+                    <Button onClick={() => name.trim() && onNext(name)} disabled={!name.trim()} className="w-64">متابعة</Button>
+                </div>
+            );
+        };
 
-            useEffect(() => { AUDIO_SETTINGS.sfxOn = audioSettings.sfxOn; AUDIO_SETTINGS.musicOn = audioSettings.musicOn; }, [audioSettings]);
+        const SettingsModal = ({ isOpen, onClose, sfx, music, onUpdate }) => {
+            const [step, setStep] = useState('MAIN'); // MAIN, CONFIRM_DELETE
+            const [deleteInput, setDeleteInput] = useState('');
 
-            const saveDataInternal = (finalScore) => {
-                const sessionId = Date.now().toString();
-                localStorage.setItem('currentSessionId', sessionId);
-                const newEntry = { id: sessionId, name: name || "لاعب مجهول", score: finalScore, date: new Date().toISOString() };
-                const saved = localStorage.getItem('eventPlusLeaderboardAR');
-                let list = saved ? JSON.parse(saved) : [];
-                list.push(newEntry);
-                list.sort((a, b) => b.score - a.score);
-                list = list.slice(0, 50);
-                localStorage.setItem('eventPlusLeaderboardAR', JSON.stringify(list));
-            };
-
-            const resetGame = () => { setScreen('START'); setName(''); };
-
-            // --- BACKGROUND MANAGER ---
-            const BackgroundLayer = useMemo(() => {
-                // START & DIFFICULTY = HERO ORBS (Professional)
-                if (screen === 'START' || screen === 'DIFFICULTY') {
-                    return (
-                        <div className="bg-hero-container">
-                            <div className="hero-orb orb-1"></div>
-                            <div className="hero-orb orb-2"></div>
-                            <div className="hero-orb orb-3"></div>
-                            <div className="bg-hero-grid opacity-30"></div>
-                        </div>
-                    );
+            useEffect(() => {
+                if(isOpen) {
+                    setStep('MAIN');
+                    setDeleteInput('');
                 }
-                // MENU = METEORS (Action)
-                if (screen === 'MENU') {
-                    return (
-                        <div className="bg-meteor-container">
-                            {[...Array(30)].map((_, i) => (
-                                <div key={i} className="meteor" style={{
-                                    left: `${Math.random() * 120 - 20}%`, top: `${Math.random() * 50}%`,
-                                    animationDuration: `${Math.random() * 2 + 1}s`, animationDelay: `${Math.random() * 2}s`
-                                }}></div>
-                            ))}
-                        </div>
-                    );
-                }
-                // GAME = Deep Focus
-                return (
-                    <>
-                        <div className="bg-game-deep transition-all duration-1000"></div>
-                        {[...Array(15)].map((_, i) => (
-                            <div key={i} className="particle" style={{
-                                left: `${Math.random()*100}%`, top: `${Math.random()*100}%`,
-                                width: `${Math.random()*10+2}px`, height: `${Math.random()*10+2}px`,
-                                animationDelay: `${Math.random()*5}s`, animationDuration: `${Math.random()*10+10}s`
-                            }}></div>
-                        ))}
-                    </>
-                );
-            }, [screen]);
+            }, [isOpen]);
 
-            const handleGlobalClick = () => {
-                const audio = document.getElementById('bgAudio');
-                if(audio && audio.paused && audioSettings.musicOn) { audio.play().catch(e=>{}); }
+            if (!isOpen) return null;
+
+            const handleConfirmDelete = () => {
+                if (deleteInput === "حذف") {
+                    localStorage.removeItem('festival_scores');
+                    SoundManager.delete();
+                    setStep('MAIN');
+                    alert("تم حذف السجل بنجاح");
+                }
             };
 
             return (
-                <div className="h-full relative overflow-hidden" onClick={handleGlobalClick}>
-                    {BackgroundLayer}
-                    <div className="absolute inset-0 crt-scanline"></div>
-
-                    {screen === 'START' && (
-                        <div className="fixed top-4 left-4 z-50">
-                            <button onClick={() => setShowSettings(true)} className="bg-white/10 hover:bg-white/20 p-3 rounded-full border border-white/20 backdrop-blur-md transition-all"><Icon name="Settings" size={24} /></button>
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade">
+                    <div className="bg-[#1a1025] border border-white/10 p-6 rounded-3xl w-full max-w-sm shadow-2xl transform scale-100 transition-all">
+                        
+                        {/* Header */}
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-white">
+                                {step === 'MAIN' ? 'الإعدادات' : 'تأكيد الحذف'}
+                            </h2>
+                            <button onClick={onClose} className="p-2 bg-white/5 rounded-full hover:bg-white/10"><Icon name="X" size={24}/></button>
                         </div>
-                    )}
 
-                    <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} audioSettings={audioSettings} setAudioSettings={setAudioSettings} globalVolume={globalVolume} setGlobalVolume={setGlobalVolume} />
-
-                    <MusicPlayer isInGame={screen === 'GAME'} volume={globalVolume} enabled={audioSettings.musicOn} />
-
-                    {screen === 'START' && (
-                        <div className={`h-full flex flex-col items-center justify-center p-6 text-center space-y-8 relative pb-16 z-10`}>
-                             <div className="mb-8 relative flex justify-center animate-float">
-                                <div className="absolute -inset-8 bg-purple-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
-                                {/* --- HERO SVG --- */}
-                                <svg viewBox="0 0 200 200" className="w-56 h-56 relative z-10 drop-shadow-[0_0_35px_rgba(139,92,246,0.6)]" xmlns="http://www.w3.org/2000/svg">
-                                    <defs>
-                                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#c084fc"></stop><stop offset="50%" stopColor="#a855f7"></stop><stop offset="100%" stopColor="#6366f1"></stop></linearGradient>
-                                        <filter id="neonGlow" height="300%" width="300%" x="-75%" y="-75%"><feGaussianBlur stdDeviation="5" result="coloredBlur"></feGaussianBlur><feMerge><feMergeNode in="coloredBlur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
-                                    </defs>
-                                    <path d="M100 10 L186.6 60 V160 L100 210 L13.4 160 V60 Z" fill="none" stroke="url(#logoGrad)" strokeWidth="4" opacity="0.3" transform="scale(0.9) translate(11,11)"></path>
-                                    <path d="M100 25 L165 62.5 V137.5 L100 175 L35 137.5 V62.5 Z" fill="rgba(168, 85, 247, 0.1)" stroke="url(#logoGrad)" strokeWidth="6" strokeLinejoin="round" filter="url(#neonGlow)"></path>
-                                    <circle cx="130" cy="100" r="12" fill="url(#logoGrad)" opacity="0.8"></circle>
-                                    <circle cx="70" cy="100" r="12" fill="url(#logoGrad)" opacity="0.8"></circle>
-                                    <circle cx="100" cy="70" r="8" fill="white" opacity="0.5"></circle>
-                                    <path d="M100 110 L115 135 H85 Z" fill="white" opacity="0.9" filter="url(#neonGlow)"></path>
-                                    <path d="M100 25 V45 M100 175 V155 M35 100 H55 M165 100 H145" stroke="white" strokeWidth="2" opacity="0.5" strokeLinecap="round"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 className="text-xl text-purple-300 tracking-[0.5em] uppercase mb-2">منطقة التحدي</h2>
-                                <h1 className="text-6xl font-black tracking-tighter">EVENT PLUS<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 drop-shadow-lg">GAMES</span></h1>
-                            </div>
-                            
-                            {/* --- UNIFIED GLASS CONTAINER --- */}
-                            <div className="glass-panel w-full max-w-sm rounded-3xl p-6 flex flex-col gap-4 shadow-2xl relative z-20">
-                                <div className="relative">
+                        {step === 'MAIN' ? (
+                            <>
+                                <Toggle label="الموسيقى" checked={music} onChange={(val) => onUpdate('music', val)} />
+                                <Toggle label="المؤثرات الصوتية" checked={sfx} onChange={(val) => onUpdate('sfx', val)} />
+                                
+                                <div className="mt-8 border-t border-white/10 pt-6">
+                                    <h3 className="text-sm text-gray-400 mb-3 font-bold">إدارة البيانات</h3>
+                                     <Button onClick={() => setStep('CONFIRM_DELETE')} variant="error" className="bg-red-900/50 hover:bg-red-800 border-red-500/30">
+                                        <Icon name="Trash2" size={18} />
+                                        حذف سجل المشاركين
+                                     </Button>
+                                </div>
+                                <div className="mt-4">
+                                     <Button onClick={onClose} variant="ghost">إغلاق</Button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col gap-4 animate-slideUp">
+                                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-200 text-sm">
+                                    <div className="flex items-center gap-2 mb-2 font-bold text-red-400">
+                                        <Icon name="AlertTriangle" size={18} />
+                                        تحذير هام
+                                    </div>
+                                    هل أنت متأكد من حذف جميع سجلات المشاركين؟ هذا الإجراء لا يمكن التراجع عنه.
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <label className="text-sm text-gray-400">لتأكيد الحذف، اكتب كلمة <span className="text-white font-bold">"حذف"</span> أدناه:</label>
                                     <input 
                                         type="text" 
-                                        placeholder="اكتب اسمك للمنافسة" 
-                                        className="w-full glass-input rounded-xl p-4 text-center text-xl font-bold focus:outline-none placeholder:text-white/20" 
-                                        value={name} 
-                                        readOnly 
-                                        onClick={() => setShowKeyboard(true)} 
+                                        value={deleteInput}
+                                        onChange={(e) => setDeleteInput(e.target.value)}
+                                        className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-center text-white focus:border-red-500 focus:outline-none transition-colors"
+                                        placeholder="اكتب كلمة حذف هنا"
                                     />
-                                    {name && <Icon name="Check" className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400" size={20} />}
                                 </div>
-                                <Button onClick={() => name && setScreen('DIFFICULTY')} disabled={!name} className={!name ? 'opacity-50 grayscale' : 'animate-pulse'}>
-                                    <span className="ml-2">ابدأ التحدي</span> <Icon name="ChevronLeft" />
-                                </Button>
-                                <Button variant="ghost" onClick={() => setScreen('LEADERBOARD')} className="text-sm">
-                                    مشاهدة الصدارة <Icon name="Trophy" size={16} className="mr-2" />
-                                </Button>
-                            </div>
 
-                            <VirtualKeyboard isVisible={showKeyboard} onChar={(c)=>setName(n=>n.length<15?n+(c===' '?' ':c):n)} onDelete={()=>setName(n=>n.slice(0,-1))} onEnter={()=>setShowKeyboard(false)} />
-                        </div>
-                    )}
-
-                    {/* --- IMPROVED DIFFICULTY SCREEN --- */}
-                    {screen === 'DIFFICULTY' && (
-                        <div className={`h-full flex flex-col justify-center p-6 relative pb-16 z-10 max-w-md mx-auto w-full`}>
-                            <h2 className="text-3xl font-bold text-center mb-8 drop-shadow-lg flex items-center justify-center gap-2">
-                                <Icon name="BarChart2" className="text-purple-400" /> اختر المستوى
-                            </h2>
-                            <div className="flex flex-col gap-4">
-                                {Object.values(DIFFICULTY_CONFIG).map((d) => (
-                                    <button 
-                                        key={d.id} 
-                                        onClick={() => { setDiff(d.id); setScreen('MENU'); playSound('click'); }} 
-                                        className={`group relative overflow-hidden rounded-2xl p-6 border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl text-right bg-white/5 backdrop-blur-md ${d.border} ${d.glow}`}
+                                <div className="flex gap-3 mt-2">
+                                    <Button onClick={() => setStep('MAIN')} variant="ghost" className="w-1/2">إلغاء</Button>
+                                    <Button 
+                                        onClick={handleConfirmDelete} 
+                                        disabled={deleteInput !== "حذف"}
+                                        variant="error" 
+                                        className={`w-1/2 ${deleteInput !== "حذف" ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
-                                        <div className={`absolute inset-0 bg-gradient-to-r ${d.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-                                        <div className="relative z-10 flex justify-between items-center">
-                                            <div>
-                                                <h3 className={`text-3xl font-black italic mb-1 ${d.color}`}>{d.label}</h3>
-                                                <p className="text-xs text-white/50 font-medium tracking-wide">{d.subLabel}</p>
-                                            </div>
-                                            <div className={`p-3 rounded-xl bg-white/5 border border-white/10 group-hover:bg-white/10 transition-colors ${d.color}`}>
-                                                <Icon name={d.icon} size={32} />
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 flex gap-2">
-                                            <span className="text-[10px] bg-black/40 px-2 py-1 rounded border border-white/5 text-white/70">سرعة {Math.floor(d.speedFactor*100)}%</span>
-                                            <span className="text-[10px] bg-black/40 px-2 py-1 rounded border border-white/5 text-white/70">نقاط x{d.multiplier}</span>
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-                            <Button variant="ghost" className="mt-8 mx-auto w-12 h-12 rounded-full border border-white/10" onClick={() => setScreen('START')}><Icon name="ArrowRight" /></Button>
-                        </div>
-                    )}
-
-                    {/* --- NEW PROFESSIONAL MENU SCREEN --- */}
-                    {screen === 'MENU' && (
-                        <div className="h-full flex flex-col p-6 pb-20 z-10 w-full max-w-4xl mx-auto">
-                            {/* Header Section */}
-                            <div className="flex flex-col items-center mb-8 animate-slideDown">
-                                <div className="bg-white/5 border border-white/10 px-6 py-2 rounded-full backdrop-blur-md mb-4 flex items-center gap-2 shadow-lg">
-                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                    <span className="text-sm text-white/60">اللاعب:</span>
-                                    <span className="text-lg font-bold text-purple-400">{name}</span>
+                                        تأكيد الحذف
+                                    </Button>
                                 </div>
-                                <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 drop-shadow-sm">
-                                    اختر لعبتك
-                                </h2>
                             </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
 
-                            {/* Games Grid - Adjusted Spacing (Gap-8) */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full flex-1 content-center overflow-y-auto no-scrollbar pb-10">
-                                {GAMES_LIST.map((g, i) => (
-                                    <button
-                                        key={g.id}
-                                        onClick={() => { setActiveGame(g.id); setScreen('GAME'); playSound('click'); }}
-                                        className={`group relative overflow-hidden rounded-3xl p-1 border border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] h-auto min-h-[120px] md:min-h-[160px] flex-1`}
-                                        style={{animationDelay: `${i * 100}ms`}}
-                                    >
-                                        {/* Card Interior */}
-                                        <div className="absolute inset-0 bg-[#1a103c] rounded-[22px] z-0"></div>
-                                        <div className={`absolute inset-0 bg-gradient-to-br ${g.color} opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-0`}></div>
+        // --- MAIN APP ---
+        const App = () => {
+            const [screen, setScreen] = useState('HOME');
+            const [gameType, setGameType] = useState(null);
+            const [difficulty, setDifficulty] = useState('EASY');
+            const [score, setScore] = useState(0);
+            const [lives, setLives] = useState(3);
+            const [playerName, setPlayerName] = useState("");
+            
+            // Settings State
+            const [showSettings, setShowSettings] = useState(false);
+            const [settings, setSettings] = useState({ sfx: true, music: true });
 
-                                        {/* Added gap-8 for clear spacing */}
-                                        <div className="relative z-10 flex items-center justify-start p-6 h-full bg-white/5 rounded-[22px] backdrop-blur-sm overflow-hidden gap-8">
-                                            {/* Decorative Circle Background */}
-                                            <div className={`absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-gradient-to-br ${g.color} opacity-20 blur-xl group-hover:opacity-40 transition-all`}></div>
+            const updateSetting = (key, val) => {
+                const newSettings = { ...settings, [key]: val };
+                setSettings(newSettings);
+                SoundManager.updateSettings(newSettings.sfx, newSettings.music);
+            };
 
-                                            {/* Icon */}
-                                            <div className={`w-20 h-20 rounded-2xl flex items-center justify-center bg-gradient-to-br ${g.color} shadow-lg group-hover:scale-110 transition-transform duration-300 shrink-0`}>
-                                                <Icon name={g.icon} size={40} className="text-white" />
-                                            </div>
+            const startGame = (type) => {
+                setGameType(type); setScore(0); setLives(3); setScreen('GAME');
+            };
 
-                                            {/* Text Info */}
-                                            <div className="flex flex-col items-start text-right flex-1">
-                                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 group-hover:text-purple-200 transition-colors">{g.name}</h3>
-                                                <p className="text-sm md:text-base text-white/50 font-medium leading-tight">{g.desc}</p>
-                                            </div>
+            const handleScore = (pts) => setScore(s => Math.max(0, s + pts));
+            const handleLoseLife = () => {
+                setLives(l => { if (l - 1 <= 0) { setTimeout(finishGame, 100); return 0; } return l - 1; });
+            };
+            const finishGame = () => {
+                SoundManager.win();
+                const newRecord = { name: playerName, score, date: new Date().toISOString() };
+                const existing = JSON.parse(localStorage.getItem('festival_scores') || '[]');
+                localStorage.setItem('festival_scores', JSON.stringify([...existing, newRecord]));
+                setScreen('SCORE');
+            };
 
-                                            {/* Arrow Indicator */}
-                                            <div className="absolute top-1/2 left-6 -translate-y-1/2 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                                                <Icon name="ChevronLeft" size={24} className="text-white/50" />
-                                            </div>
-                                        </div>
-                                    </button>
-                                ))}
+            return (
+                <div className="h-full relative font-tajawal">
+                    <div className="bg-hero-container"><div className="hero-orb orb-1"></div><div className="hero-orb orb-2"></div></div>
+                    <div className="crt-scanline"></div>
+
+                    {/* Settings Button */}
+                    <div className="absolute top-4 left-4 z-40">
+                        <button onClick={() => setShowSettings(true)} className="p-3 bg-white/10 rounded-full hover:bg-white/20 backdrop-blur-md border border-white/10 shadow-lg">
+                            <Icon name="Settings" size={24} className="text-white" />
+                        </button>
+                    </div>
+
+                    {/* Settings Modal */}
+                    <SettingsModal 
+                        isOpen={showSettings} 
+                        onClose={() => setShowSettings(false)} 
+                        sfx={settings.sfx} 
+                        music={settings.music} 
+                        onUpdate={updateSetting} 
+                    />
+
+                    {screen === 'HOME' && (
+                        <div className="flex flex-col items-center justify-center h-full gap-8 animate-slideUp px-4 text-center">
+                            <div className="relative mb-2">
+                                <div className="absolute -inset-4 bg-purple-500/20 blur-xl rounded-full"></div>
+                                <h1 className="relative text-5xl sm:text-7xl font-black bg-gradient-to-br from-white via-purple-200 to-purple-400 text-transparent bg-clip-text drop-shadow-sm tracking-tighter font-brand">
+                                    EVENT PLUS<br/>GAMES
+                                </h1>
                             </div>
                             
-                             <div className="mt-auto flex justify-center pt-4">
-                                 <Button variant="ghost" onClick={() => setScreen('DIFFICULTY')} className="text-sm opacity-50 hover:opacity-100">
-                                     <Icon name="ArrowRight" size={16} className="ml-2" /> تغيير المستوى
-                                 </Button>
+                            <div className="flex flex-col gap-4 w-full max-w-md mt-4">
+                                <div onClick={() => { if(audioCtx.state === 'suspended') audioCtx.resume(); setScreen('NAME_ENTRY'); }} className="glass-panel p-6 rounded-2xl flex items-center gap-6 hover:bg-white/10 cursor-pointer border-l-4 border-l-purple-500/50 transition-all hover:translate-x-[-5px] group">
+                                    <div className="p-4 bg-purple-900/30 rounded-full group-hover:scale-110 transition-transform"><Icon name="Rocket" size={32} className="text-purple-400" /></div>
+                                    <div className="text-right flex-1">
+                                        <div className="font-bold text-xl text-white">ابدأ المنافسة</div>
+                                        <div className="text-sm text-white/40">سجل اسمك وانطلق في التحدي</div>
+                                    </div>
+                                    <Icon name="ChevronLeft" className="text-white/20 group-hover:text-white transition-colors" />
+                                </div>
+
+                                <div onClick={() => setScreen('LEADERBOARD')} className="glass-panel p-6 rounded-2xl flex items-center gap-6 hover:bg-white/10 cursor-pointer border-l-4 border-l-amber-500/50 transition-all hover:translate-x-[-5px] group">
+                                    <div className="p-4 bg-amber-900/30 rounded-full group-hover:scale-110 transition-transform"><Icon name="Trophy" size={32} className="text-amber-400" /></div>
+                                    <div className="text-right flex-1">
+                                        <div className="font-bold text-xl text-white">لوحة الصدارة</div>
+                                        <div className="text-sm text-white/40">شاهد أبطال المهرجان</div>
+                                    </div>
+                                    <Icon name="ChevronLeft" className="text-white/20 group-hover:text-white transition-colors" />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {screen === 'NAME_ENTRY' && <NameEntryScreen onNext={(name) => { setPlayerName(name); setScreen('DIFFICULTY'); }} />}
+                    
+                    {screen === 'DIFFICULTY' && (
+                        <div className="flex flex-col items-center justify-center h-full gap-4 animate-slideUp p-4 w-full max-w-lg mx-auto">
+                            <h2 className="text-2xl font-bold text-white/80 mb-2">مرحباً {playerName}، اختر مستواك</h2>
+                            {Object.values(DIFFICULTY_CONFIG).map(d => (
+                                <div key={d.id} onClick={() => setDifficulty(d.id)} className={`w-full p-4 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between group ${difficulty === d.id ? `${d.bg} ${d.border}` : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
+                                    <div className="flex items-center gap-4"><div className={`p-3 rounded-full ${difficulty === d.id ? 'bg-black/20' : 'bg-white/5'}`}><Icon name={d.icon} className={d.color} size={24} /></div><div className="text-right"><div className={`font-bold ${d.color}`}>{d.label}</div><div className="text-sm text-white/40">{d.subLabel}</div></div></div>
+                                    <div className="text-xs font-mono text-white/30 bg-black/20 px-2 py-1 rounded">x{d.multiplier}</div>
+                                </div>
+                            ))}
+                            <div className="w-full flex gap-3 mt-4">
+                                <Button onClick={() => setScreen('HOME')} variant="ghost" className="w-1/3">عودة</Button>
+                                <Button onClick={() => setScreen('SELECT_GAME')} className="w-2/3" variant="primary">التالي</Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {screen === 'SELECT_GAME' && (
+                        <div className="flex flex-col justify-center h-full max-w-xl mx-auto p-6 animate-slideUp">
+                            <div className="flex flex-col gap-4 w-full">
+                                <div onClick={() => startGame('MATH')} className="glass-panel p-6 rounded-2xl flex items-center gap-6 hover:bg-white/10 cursor-pointer border-l-4 border-l-cyan-400/50 transition-all hover:translate-x-[-5px]">
+                                    <div className="p-4 bg-cyan-900/30 rounded-full"><Icon name="Calculator" size={32} className="text-cyan-400" /></div>
+                                    <div className="text-right flex-1">
+                                        <div className="font-bold text-xl">تحدي الحساب</div>
+                                        <div className="text-sm text-white/40">حل المسائل الرياضية بسرعة</div>
+                                    </div>
+                                    <Icon name="ChevronLeft" className="text-white/20" />
+                                </div>
+
+                                <div onClick={() => startGame('COLOR')} className="glass-panel p-6 rounded-2xl flex items-center gap-6 hover:bg-white/10 cursor-pointer border-l-4 border-l-pink-400/50 transition-all hover:translate-x-[-5px]">
+                                    <div className="p-4 bg-pink-900/30 rounded-full"><Icon name="Palette" size={32} className="text-pink-400" /></div>
+                                    <div className="text-right flex-1">
+                                        <div className="font-bold text-xl">خداع الألوان</div>
+                                        <div className="text-sm text-white/40">طابق المعنى مع اللون</div>
+                                    </div>
+                                    <Icon name="ChevronLeft" className="text-white/20" />
+                                </div>
+
+                                <div onClick={() => startGame('REFLEX')} className="glass-panel p-6 rounded-2xl flex items-center gap-6 hover:bg-white/10 cursor-pointer border-l-4 border-l-red-400/50 transition-all hover:translate-x-[-5px]">
+                                    <div className="p-4 bg-red-900/30 rounded-full"><Icon name="MousePointer2" size={32} className="text-red-400" /></div>
+                                    <div className="text-right flex-1">
+                                        <div className="font-bold text-xl">سرعة اليد</div>
+                                        <div className="text-sm text-white/40">اصطد الأهداف وتجنب القنابل</div>
+                                    </div>
+                                    <Icon name="ChevronLeft" className="text-white/20" />
+                                </div>
                             </div>
                         </div>
                     )}
 
                     {screen === 'GAME' && (
-                        <div className={`h-full z-10 relative`}>
-                            <GameEngine gameId={activeGame} difficulty={diff} onExit={() => setScreen('MENU')} onAutoSave={saveDataInternal} onViewLeaderboard={() => setScreen('LEADERBOARD')} onHome={resetGame} volume={globalVolume} onOpenSettings={() => setShowSettings(true)} />
+                        <div className="h-full relative pt-20 pb-4">
+                            <div className="absolute top-0 right-0 p-4 z-10">
+                                <div className="flex flex-col items-end"><div className="font-mono text-3xl font-black text-white drop-shadow-md leading-none">{score}</div><div className={`text-xs font-bold ${DIFFICULTY_CONFIG[difficulty].color}`}>{DIFFICULTY_CONFIG[difficulty].label}</div></div>
+                            </div>
+                            <div className="absolute top-0 left-16 p-4 z-10">
+                                <div className="flex gap-1 bg-black/40 p-2 rounded-full backdrop-blur-md border border-white/10">{[...Array(3)].map((_, i) => <Icon key={i} name="Heart" size={18} className={`${i < lives ? "text-red-500 fill-red-500" : "text-gray-700"}`} />)}</div>
+                            </div>
+                            
+                            {gameType === 'MATH' && <GameMath diff={DIFFICULTY_CONFIG[difficulty]} onScore={handleScore} onEnd={finishGame} onLoseLife={handleLoseLife} />}
+                            {gameType === 'COLOR' && <GameColor diff={DIFFICULTY_CONFIG[difficulty]} onScore={handleScore} onEnd={finishGame} onLoseLife={handleLoseLife} />}
+                            {gameType === 'REFLEX' && <GameReflex diff={DIFFICULTY_CONFIG[difficulty]} onScore={handleScore} onEnd={finishGame} />}
                         </div>
                     )}
 
-                    {screen === 'LEADERBOARD' && <LeaderboardScreen onBack={resetGame} currentName={name} />}
+                    {screen === 'SCORE' && (
+                        <div className="flex flex-col items-center justify-center h-full gap-6 animate-slideUp z-20 relative">
+                            <div className="text-center">
+                                <h2 className="text-2xl font-bold text-white/60 mb-2">أحسنت يا {playerName}</h2>
+                                <div className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-lg">{score}</div>
+                            </div>
+                            <div className="w-64 space-y-3">
+                                <Button onClick={() => startGame(gameType)} variant="primary">إعادة اللعب</Button>
+                                <Button onClick={() => setScreen('HOME')} variant="ghost">الرئيسية</Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {screen === 'LEADERBOARD' && <LeaderboardScreen onBack={() => setScreen('HOME')} currentScore={score} />}
                     
                     <CopyrightBadge />
                     <Footer />
@@ -989,43 +664,21 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
-		
-		
-		let tapCount = 0;       // عداد النقرات
-  let tapTimer = null;    // مؤقت التصفير
 
-  document.addEventListener('click', function() {
-    tapCount++; // زيادة العداد
-
-    // إعادة ضبط العداد إذا توقف النقر لأكثر من 400 جزء من الثانية
-    if (tapTimer) clearTimeout(tapTimer);
-    tapTimer = setTimeout(() => {
-      tapCount = 0;
-    }, 400); 
-
-    // الشرط: 5 ضغطات فقط
-    if (tapCount === 5) {
-      // نتحقق أولاً: هل نحن خارج وضع ملء الشاشة؟ إذا نعم، ندخل الوضع.
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        enterFullScreen();
-      }
-      
-      // ملاحظة: لا يوجد كود هنا للخروج (Exit)، تم حذفه بناءً على طلبك
-      tapCount = 0; // تصفير العداد
-    }
-  });
-
-  // دالة الدخول (فقط)
-  function enterFullScreen() {
-    let elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) { /* مهم للأندرويد و كروم */
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
-    }
-  }
+        // --- 5-TAP FULLSCREEN SCRIPT ---
+        let tapCount = 0;
+        let tapTimer = null;
+        document.addEventListener('click', function() {
+            tapCount++;
+            if (tapTimer) clearTimeout(tapTimer);
+            tapTimer = setTimeout(() => { tapCount = 0; }, 400); 
+            if (tapCount === 5) {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(e => console.log(e));
+                }
+                tapCount = 0;
+            }
+        });
     </script>
 </body>
 </html>
