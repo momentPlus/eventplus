@@ -152,7 +152,7 @@
                 id: 'EASY', label: 'مبتدئ', subLabel: 'تدريب هادئ', icon: 'Baby', 
                 multiplier: 1, 
                 timeFactor: 1.3,
-                colorTimer: 4000, // 4 seconds per turn
+                colorTimer: 4000, 
                 color: 'text-emerald-400', border: 'border-emerald-500/50', bg: 'bg-emerald-500/10', 
                 mathRange: 10, gamePoints: { REFLEX: 30, COLOR: 50, MATH: 80 } 
             },
@@ -160,7 +160,7 @@
                 id: 'MEDIUM', label: 'متوسط', subLabel: 'التحدي القياسي', icon: 'Swords', 
                 multiplier: 1.5, 
                 timeFactor: 1.0,
-                colorTimer: 2500, // 2.5 seconds per turn
+                colorTimer: 2500,
                 color: 'text-amber-400', border: 'border-amber-500/50', bg: 'bg-amber-500/10', 
                 mathRange: 50, gamePoints: { REFLEX: 50, COLOR: 70, MATH: 100 } 
             },
@@ -168,7 +168,7 @@
                 id: 'HARD', label: 'صعب', subLabel: 'للمحترفين', icon: 'Flame', 
                 multiplier: 2, 
                 timeFactor: 0.7,
-                colorTimer: 1500, // 1.5 seconds per turn
+                colorTimer: 1500,
                 color: 'text-rose-500', border: 'border-rose-500/50', bg: 'bg-rose-500/10', 
                 mathRange: 100, gamePoints: { REFLEX: 80, COLOR: 100, MATH: 150 } 
             }
@@ -202,6 +202,62 @@
                 </div>
             </div>
         );
+
+        // --- VIRTUAL KEYBOARD COMPONENT ---
+        const VirtualKeyboard = ({ onKeyPress, onDelete, onSubmit }) => {
+            const [layout, setLayout] = useState('AR'); // AR or EN
+
+            const keysAR = [
+                ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+                ['ض', 'ص', 'ث', 'ق', 'ف', 'غ', 'ع', 'ه', 'خ', 'ح', 'ج', 'د'],
+                ['ش', 'س', 'ي', 'ب', 'ل', 'ا', 'ت', 'ن', 'م', 'ك', 'ط'],
+                ['ئ', 'ء', 'ؤ', 'ر', 'لا', 'ى', 'ة', 'و', 'ز', 'ظ']
+            ];
+
+            const keysEN = [
+                ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+                ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+            ];
+
+            const currentKeys = layout === 'AR' ? keysAR : keysEN;
+
+            return (
+                <div className="fixed top-0 left-0 w-full bg-[#150a20]/95 backdrop-blur-xl border-b border-white/20 p-2 pb-4 pt-4 z-50 animate-slideUp flex flex-col gap-2 shadow-[0_10px_40px_rgba(0,0,0,0.5)] select-none">
+                    
+                    {/* Toolbar */}
+                    <div className="flex justify-between px-2 mb-1">
+                        <button onClick={() => setLayout(l => l === 'AR' ? 'EN' : 'AR')} className="text-xs font-bold text-purple-300 bg-white/5 px-3 py-1 rounded hover:bg-white/10">
+                            {layout === 'AR' ? 'English' : 'عربي'}
+                        </button>
+                        <div onClick={onSubmit} className="text-xs font-bold text-gray-400 bg-white/5 px-3 py-1 rounded cursor-pointer hover:bg-white/10 flex items-center gap-1">
+                            <Icon name="Keyboard" size={14}/> إغلاق
+                        </div>
+                    </div>
+
+                    {currentKeys.map((row, i) => (
+                        <div key={i} className="flex justify-center gap-1">
+                            {row.map(char => (
+                                <button 
+                                    key={char} 
+                                    onClick={(e) => { e.stopPropagation(); SoundManager.click(); onKeyPress(char); }}
+                                    className="h-10 w-[9%] sm:w-10 rounded md:rounded-lg bg-white/10 hover:bg-white/25 active:bg-purple-500 active:scale-95 text-white font-bold transition-all shadow-sm border border-white/5 text-sm sm:text-base"
+                                >
+                                    {char}
+                                </button>
+                            ))}
+                        </div>
+                    ))}
+                    
+                    <div className="flex justify-center gap-2 mt-1 px-1">
+                        <button onClick={() => { SoundManager.click(); onKeyPress(' '); }} className="h-11 flex-[2] rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/30 text-white font-bold border border-white/5 text-sm">مسافة</button>
+                        <button onClick={() => { SoundManager.click(); onDelete(); }} className="h-11 flex-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 active:bg-red-500/40 text-red-200 border border-red-500/30 flex items-center justify-center"><Icon name="Delete" size={20} /></button>
+                        <button onClick={() => { SoundManager.click(); onSubmit(); }} className="h-11 flex-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 active:bg-emerald-500/40 text-emerald-200 border border-emerald-500/30 flex items-center justify-center"><Icon name="Check" size={20} /></button>
+                    </div>
+                </div>
+            );
+        };
 
         // --- COPYRIGHT COMPONENT ---
         const CopyrightBadge = () => (
@@ -390,11 +446,45 @@
 
         const NameEntryScreen = ({ onNext }) => {
             const [name, setName] = useState("");
+            const [showKeyboard, setShowKeyboard] = useState(false);
+
+            const handleKeyPress = (char) => {
+                if (name.length < 15) setName(prev => prev + char);
+            };
+
+            const handleDelete = () => {
+                setName(prev => prev.slice(0, -1));
+            };
+            
+            const handleSubmit = () => {
+                 if (name.trim()) {
+                     setShowKeyboard(false);
+                     onNext(name);
+                 }
+            };
+
             return (
                 <div className="flex flex-col items-center justify-center h-full gap-8 animate-slideUp p-6">
                     <h2 className="text-3xl font-bold">سجل اسمك للتحدي</h2>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="اسم اللاعب" className="glass-input w-full max-w-xs text-2xl py-4 rounded-xl" maxLength={15} />
-                    <Button onClick={() => name.trim() && onNext(name)} disabled={!name.trim()} className="w-64">متابعة</Button>
+                    
+                    {/* Input Simulation - DIV instead of INPUT to prevent Android Keyboard */}
+                    <div 
+                        onClick={() => setShowKeyboard(true)}
+                        className={`glass-input w-full max-w-xs text-2xl py-4 rounded-xl cursor-pointer relative select-none transition-all flex items-center justify-center min-h-[64px] ${showKeyboard ? 'border-purple-500 ring-2 ring-purple-500/20' : ''}`}
+                    >
+                        {name || <span className="text-white/30 text-lg">اضغط للكتابة</span>}
+                        {showKeyboard && <span className="absolute animate-pulse text-purple-400 ml-1 translate-x-full">|</span>} 
+                    </div>
+
+                    <Button onClick={handleSubmit} disabled={!name.trim()} className="w-64">متابعة</Button>
+                    
+                    {showKeyboard && (
+                        <VirtualKeyboard 
+                            onKeyPress={handleKeyPress} 
+                            onDelete={handleDelete} 
+                            onSubmit={handleSubmit}
+                        />
+                    )}
                 </div>
             );
         };
@@ -500,6 +590,21 @@
             // Settings State
             const [showSettings, setShowSettings] = useState(false);
             const [settings, setSettings] = useState({ sfx: true, music: true });
+
+            // Global click handler to initialize audio
+            useEffect(() => {
+                const handleGlobalClick = () => {
+                    if (audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                    if (settings.music && !bgmInterval) {
+                        startBgm();
+                    }
+                };
+
+                window.addEventListener('pointerdown', handleGlobalClick, { once: true });
+                return () => window.removeEventListener('pointerdown', handleGlobalClick);
+            }, [settings.music]);
 
             const updateSetting = (key, val) => {
                 const newSettings = { ...settings, [key]: val };
