@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMPay Ramadan Challenge</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ompay-blue': '#2D13EA',
+                        'ompay-orange': '#FF7800',
+                    },
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    },
+                    animation: {
+                        'float-slow': 'float-slow 8s infinite ease-in-out',
+                        'float-reverse': 'float-reverse 10s infinite ease-in-out',
+                        'flipIn': 'flipIn 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'fadeIn': 'fadeIn 0.5s ease-out',
+                        'fadeOut': 'fadeOut 0.5s ease-in forwards', 
+                        'slideUp': 'slideUp 0.5s ease-out',
+                        'pulse-glow': 'pulse-glow 2s infinite',
+                        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'shine': 'shine 3s infinite', 
+                        // New Animated Icons Animations
+                        'lid-bounce': 'lid-bounce 2s infinite cubic-bezier(0.280, 0.840, 0.420, 1)',
+                        'wiggle-shiver': 'wiggle-shiver 2s infinite ease-in-out',
+                        'hand-spin': 'spin 3s linear infinite',
+                        'hand-spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        'float-slow': {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(5deg)' },
+                        },
+                        'float-reverse': {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(15px) rotate(-5deg)' },
+                        },
+                        'flipIn': {
+                            'from': { transform: 'rotateX(90deg)', opacity: '0' },
+                            'to': { transform: 'rotateX(0deg)', opacity: '1' },
+                        },
+                        'fadeIn': {
+                            'from': { opacity: '0' },
+                            'to': { opacity: '1' },
+                        },
+                        'fadeOut': { 
+                            'from': { opacity: '1', transform: 'scale(1)' },
+                            'to': { opacity: '0', transform: 'scale(0.95)' },
+                        },
+                        'slideUp': {
+                            'from': { opacity: '0', transform: 'translateY(20px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '0.2' },
+                            '50%': { opacity: '0.4' },
+                        },
+                        'shine': {
+                            '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
+                            '30%': { transform: 'translateX(250%) skewX(-20deg)' }, 
+                            '100%': { transform: 'translateX(250%) skewX(-20deg)' }
+                        },
+                        // Icon Keyframes
+                        'lid-bounce': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '5%': { transform: 'translateY(-3px) rotate(-3deg)' },
+                            '10%': { transform: 'translateY(0) rotate(0)' },
+                            '15%': { transform: 'translateY(-2px) rotate(3deg)' },
+                            '20%': { transform: 'translateY(0) rotate(0)' },
+                        },
+                        'wiggle-shiver': {
+                            '0%, 100%': { transform: 'scale(1) rotate(0deg)' },
+                            '10%': { transform: 'scale(1.1) rotate(-5deg)' },
+                            '20%': { transform: 'scale(1.1) rotate(5deg)' },
+                            '30%': { transform: 'scale(1.1) rotate(-5deg)' },
+                            '40%': { transform: 'scale(1) rotate(0deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .font-en { font-family: 'Montserrat', sans-serif; }
+        .perspective-1000 { perspective: 1000px; }
+        circle { transition: stroke-dashoffset 1s ease-out; }
+    </style>
+</head>
+<body class="bg-neutral-900 min-h-screen flex items-center justify-center p-4 md:p-8 overflow-hidden relative selection:bg-ompay-orange selection:text-white">
+
+    <!-- Website Background Elements -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(45,19,234,0.15),transparent_70%)]"></div>
+        <div class="hidden md:block absolute top-10 left-10 text-white/5 text-9xl font-black font-en -rotate-12 select-none">OMPAY</div>
+        <div class="hidden md:block absolute bottom-10 right-10 text-ompay-orange/5 text-9xl font-black font-en rotate-12 select-none">RAMADAN</div>
+    </div>
+
+    <!-- Phone Frame -->
+    <div id="phone-frame" class="relative w-full max-w-[400px] h-[800px] bg-[#0a0a2a] shadow-[0_20px_60px_-15px_rgba(45,19,234,0.5)] overflow-hidden rounded-[2rem] md:rounded-[3rem] border-[8px] border-gray-800 ring-1 ring-white/10 z-10 transition-all duration-500">
+        
+        <!-- Notch -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 h-7 w-40 bg-black rounded-b-2xl z-20 hidden md:block"></div>
+
+        <!-- Dynamic Background (Inside Phone) -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#180e52] via-ompay-blue to-[#0d044a]"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+        
+        <!-- Floating Elements Background -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <svg class="absolute top-20 right-10 text-white/5 w-64 h-64 animate-float-slow rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            <svg class="absolute bottom-40 left-10 text-white/5 w-48 h-48 animate-float-reverse rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="7" x2="7" y2="17"></line><polyline points="17 17 7 17 7 7"></polyline></svg>
+            <div class="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-pulse"></div>
+            <div class="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-ompay-orange rounded-full animate-pulse delay-75"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="relative z-10 h-full flex flex-col">
+            <!-- Status Bar -->
+            <div class="h-10 w-full flex justify-between items-center px-6 pt-2 opacity-50 text-[10px] text-white select-none">
+                <span class="font-en font-bold">9:41</span>
+                <div class="flex gap-1">
+                    <div class="w-3 h-3 bg-white rounded-full"></div>
+                    <div class="w-3 h-3 bg-white rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Game Container -->
+            <div id="app-container" class="flex-1 overflow-hidden relative flex flex-col">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Sound Logic (Web Audio API) - Super Soft & Pleasant ---
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playCorrectSound() {
+            initAudio();
+            const now = audioCtx.currentTime;
+            
+            // Create two oscillators for a harmony (Major 3rd interval)
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc2.type = 'sine';
+
+            // C5 and E5 for a pleasant major chord sound
+            osc1.frequency.setValueAtTime(523.25, now); 
+            osc2.frequency.setValueAtTime(659.25, now);
+
+            // Very soft volume envelope
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.1, now + 0.1); // Soft attack
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.8); // Long smooth release
+
+            osc1.connect(gainNode);
+            osc2.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 0.8);
+            osc2.stop(now + 0.8);
+        }
+
+        function playWrongSound() {
+            initAudio();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            // Sine wave for dullness (no harsh buzz)
+            osc.type = 'sine';
+            
+            // Low frequency dip
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.2);
+            
+            // Quick, soft thud envelope
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05); // Attack
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3); // Decay
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+
+        // --- Game Data ---
+        const content = {
+            ar: {
+                start: { subtitle: "مسابقة فوازير رمضان", speed: "السرعة", knowledge: "المعرفة", prizes: "الجوائز", btn: "اضغط للبدء" },
+                game: { streak: "تتابع", question: "سؤال", next: "التالي" },
+                result: { winnerTitle: "أداء مذهل! 🌟", loserTitle: "حظاً أوفر!", winnerMsg: "أنت خبير في ثقافة عمان وخدمات OMPay.", loserMsg: "لا بأس، رمضان شهر الفرص. جرب مرة أخرى.", openGift: "اضغط لفتح العيدية", prizeLabel: "الجائزة", prizeDesc: "خصم 25% على دفع الفواتير", retry: "إعادة", share: "مشاركة" },
+                questions: [
+                    { question: "شعار OMPay يعبر عن الهوية الوطنية. أي عبارة تمثل ذلك؟", options: ["الدفع السريع", "فخور بكوني عماني", "المحفظة الأولى", "تكنولوجيا المستقبل"], correct: 1 },
+                    { question: "اللون البرتقالي في OMPay يرمز للطاقة. ماذا نسمي هذا اللون في دليل الهوية؟", options: ["Sunset Orange", "Gold Mountains", "Desert Sand", "Omani Halwa"], correct: 1 },
+                    { question: "أكلة عمانية شعبية تتكون من اللحم والقمح المهروس، وتُقدم عادة في المناسبات؟", options: ["الهريس", "العرسية", "المكبوس", "الشواء"], correct: 0 },
+                    { question: "ميزة في OMPay تمكنك من دفع فواتير الكهرباء والمياه بضغطة زر؟", options: ["التحويل الدولي", "دفع الفواتير", "المحادثة الفورية", "المسح الضوئي"], correct: 1 }
+                ]
+            },
+            en: {
+                start: { subtitle: "Ramadan Fawazir Contest", speed: "Speed", knowledge: "Knowledge", prizes: "Prizes", btn: "Tap to Start" },
+                game: { streak: "Streak", question: "QUESTION", next: "Next" },
+                result: { winnerTitle: "Amazing! 🌟", loserTitle: "Hard Luck!", winnerMsg: "You are an expert in Omani culture & OMPay services.", loserMsg: "No worries, try again to win next time.", openGift: "Tap to Open Eidiya", prizeLabel: "PRIZE", prizeDesc: "25% OFF Bill Payments", retry: "Retry", share: "Share" },
+                questions: [
+                    { question: "OMPay's slogan reflects national identity. Which phrase is it?", options: ["Fast Payments", "Proud to be Omani", "The First Wallet", "Future Tech"], correct: 1 },
+                    { question: "The Orange color in OMPay stands for energy. What is it called in the guidelines?", options: ["Sunset Orange", "Gold Mountains", "Desert Sand", "Omani Halwa"], correct: 1 },
+                    { question: "A popular Omani dish made of meat and wheat, usually served on special occasions?", options: ["Harees", "Arsia", "Makboos", "Shuwa"], correct: 0 },
+                    { question: "OMPay feature that lets you pay electricity and water bills instantly?", options: ["Intl Transfer", "Bill Payment", "Instant Chat", "Scan & Pay"], correct: 1 }
+                ]
+            }
+        };
+
+        // --- Icons (SVG Strings) ---
+        // Enhanced SVGs with Tailwind classes for animation
+        const icons = {
+            globe: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`,
+            moon: `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="#FF7800" stroke="#FF7800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
+            chevronUpRight: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 L17 7 M17 7 H7 M17 7 V17" /></svg>`,
+            chevronDownLeft: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 L7 17 M7 17 V7 M7 17 H17" /></svg>`,
+            arrowUpRight: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>`,
+            
+            // ANIMATED CLOCK: Separated hands
+            clock: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10" class="stroke-ompay-orange"></circle>
+                      <line x1="12" y1="12" x2="12" y2="6" class="origin-[12px_12px] animate-hand-spin stroke-gray-300"></line>
+                      <line x1="12" y1="12" x2="16" y2="14" class="origin-[12px_12px] animate-hand-spin-slow stroke-gray-500"></line>
+                    </svg>`,
+            
+            // ANIMATED ZAP: Wiggle and Scale
+            zap: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-wiggle-shiver drop-shadow-[0_0_5px_rgba(255,120,0,0.5)]">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" class="fill-ompay-orange/20 stroke-ompay-orange"></polygon>
+                  </svg>`,
+            
+            // ANIMATED GIFT: Bouncing Lid
+            gift: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 12 20 22 4 22 4 12" class="stroke-gray-400"></polyline>
+                    <line x1="12" y1="22" x2="12" y2="12" class="stroke-ompay-orange"></line>
+                    <!-- Group for Lid Animation -->
+                    <g class="animate-lid-bounce origin-[12px_12px]">
+                        <rect x="2" y="7" width="20" height="5" class="stroke-ompay-orange fill-white/5"></rect>
+                        <line x1="12" y1="7" x2="12" y2="12" class="stroke-ompay-orange"></line>
+                        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" class="stroke-ompay-orange"></path>
+                        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" class="stroke-ompay-orange"></path>
+                    </g>
+                   </svg>`,
+            
+            check: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+            x: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+            refresh: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>`,
+            share: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
+            star: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#FF7800" stroke="#FF7800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
+        };
+
+        // --- State ---
+        let state = {
+            lang: 'ar',
+            screen: 'start', // start, quiz, result
+            currentQ: 0,
+            score: 0,
+            streak: 0,
+            timeLeft: 15,
+            isAnswered: false,
+            selectedOption: null,
+            showPrize: false
+        };
+
+        let timerInterval = null;
+        const TIME_PER_QUESTION = 15;
+
+        // --- Core Functions ---
+
+        function init() {
+            render();
+            // Initialize audio context on first user interaction
+            document.body.addEventListener('click', () => initAudio(), { once: true });
+        }
+
+        function setLang(l) {
+            state.lang = l;
+            document.documentElement.lang = l;
+            document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('phone-frame').dir = l === 'ar' ? 'rtl' : 'ltr';
+            
+            // Flip decorative arrows based on dir
+            const arrows = document.querySelectorAll('.rtl-flip');
+            arrows.forEach(el => {
+                if (l === 'ar') {
+                    el.classList.add('right-10'); el.classList.remove('left-10');
+                } else {
+                    el.classList.add('left-10'); el.classList.remove('right-10');
+                }
+            });
+
+            resetGame();
+        }
+
+        function startGame() {
+            initAudio(); // Ensure audio is ready
+            state.screen = 'quiz';
+            state.currentQ = 0;
+            state.score = 0;
+            state.streak = 0;
+            state.timeLeft = TIME_PER_QUESTION;
+            state.isAnswered = false;
+            state.selectedOption = null;
+            render();
+            startTimer();
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            state.timeLeft = TIME_PER_QUESTION;
+            updateTimerVisuals(); // Reset visual
+            
+            timerInterval = setInterval(() => {
+                if(state.isAnswered) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+                
+                state.timeLeft--;
+                updateTimerVisuals();
+
+                if (state.timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleAnswer(-1); // Time out
+                    playWrongSound(); // Play wrong sound on timeout
+                }
+            }, 1000);
+        }
+
+        function updateTimerVisuals() {
+            const timerEl = document.getElementById('timer-text');
+            const circleEl = document.getElementById('timer-circle');
+            if (timerEl && circleEl) {
+                timerEl.innerText = state.timeLeft;
+                if(state.timeLeft < 5) {
+                    timerEl.classList.add('text-red-500', 'animate-pulse');
+                    timerEl.classList.remove('text-white');
+                    circleEl.setAttribute('stroke', '#ef4444');
+                } else {
+                    timerEl.classList.remove('text-red-500', 'animate-pulse');
+                    timerEl.classList.add('text-white');
+                    circleEl.setAttribute('stroke', '#FF7800');
+                }
+                // Update circle stroke
+                const offset = 150 - (150 * state.timeLeft) / TIME_PER_QUESTION;
+                circleEl.style.strokeDashoffset = offset;
+            }
+        }
+
+        function handleAnswer(index) {
+            if (state.isAnswered) return;
+            state.isAnswered = true;
+            state.selectedOption = index;
+            clearInterval(timerInterval);
+
+            const t = content[state.lang];
+            const correctIndex = t.questions[state.currentQ].correct;
+
+            if (index === correctIndex) {
+                state.score++;
+                state.streak++;
+                playCorrectSound();
+            } else {
+                state.streak = 0;
+                playWrongSound();
+            }
+
+            renderQuizOptions(); // Re-render options to show colors
+            
+            // Transition Logic
+            setTimeout(() => {
+                // Add fadeOut class to the quiz body container
+                const quizBody = document.getElementById('quiz-body');
+                if (quizBody) {
+                    quizBody.classList.remove('animate-slideUp'); // ensure clean state
+                    quizBody.classList.add('animate-fadeOut');
+                }
+            }, 1000); 
+
+            setTimeout(() => {
+                if (state.currentQ < t.questions.length - 1) {
+                    state.currentQ++;
+                    state.timeLeft = TIME_PER_QUESTION;
+                    state.isAnswered = false;
+                    state.selectedOption = null;
+                    render();
+                    startTimer();
+                } else {
+                    state.screen = 'result';
+                    render();
+                }
+            }, 1500); 
+        }
+
+        function resetGame() {
+            state.screen = 'start';
+            state.showPrize = false;
+            if(timerInterval) clearInterval(timerInterval);
+            render();
+        }
+
+        // --- Render Functions ---
+
+        function render() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = '';
+            
+            if (state.screen === 'start') {
+                container.appendChild(renderStartScreen());
+            } else if (state.screen === 'quiz') {
+                container.appendChild(renderQuizScreen());
+            } else if (state.screen === 'result') {
+                container.appendChild(renderResultScreen());
+            }
+        }
+
+        function renderStartScreen() {
+            const t = content[state.lang];
+            const isRTL = state.lang === 'ar';
+            const div = document.createElement('div');
+            div.className = 'flex flex-col items-center justify-center h-full text-center p-8 z-10 animate-fadeIn relative';
+            
+            // Switch image source based on language
+            const btnImageSrc = state.lang === 'ar' 
+                ? 'بدء التحدي.png' 
+                : 'Click Start.png';
+                
+            // Fallback placeholder in case local image is missing in preview
+            const fallbackSrc = state.lang === 'ar'
+                ? 'https://placehold.co/400x250/2D13EA/ffffff.png?text=%D8%A7%D8%A8%D8%AF%D8%A3+%D8%A7%D9%84%D8%AA%D8%AD%D8%AF%D9%8A&font=roboto'
+                : 'https://placehold.co/400x250/2D13EA/ffffff.png?text=START+GAME&font=roboto';
+
+            div.innerHTML = `
+                <!-- Lang Switcher -->
+                <button onclick="setLang('${state.lang === 'ar' ? 'en' : 'ar'}')" class="absolute top-8 right-6 bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-md transition-all flex items-center gap-2 px-3 border border-white/10 cursor-pointer z-50">
+                    <span class="text-white">${icons.globe}</span>
+                    <span class="text-xs text-white font-bold">${state.lang === 'ar' ? 'EN' : 'AR'}</span>
+                </button>
+
+                <!-- Brand Logo Image -->
+                <div class="flex flex-col items-center justify-center mb-6 mt-10 transform hover:scale-105 transition-transform duration-500 cursor-pointer" onclick="startGame()">
+                     <img 
+                        src="logo.png" 
+                        onerror="this.onerror=null;this.src='https://placehold.co/400x200/2D13EA/ffffff.png?text=OMPAY+Logo&font=montserrat';"
+                        alt="OMPay Logo" 
+                        class="w-48 md:w-56 h-auto drop-shadow-2xl"
+                    />
+                </div>
+
+                <p class="text-ompay-orange font-bold text-xl mb-10 tracking-wide">${t.start.subtitle}</p>
+
+                <div class="grid grid-cols-3 gap-3 mb-8 w-full max-w-xs">
+                    <div class="bg-white/5 rounded-xl p-3 flex flex-col items-center gap-2 border border-white/5 hover:bg-white/10 transition-colors group">
+                        <div class="text-ompay-orange scale-110">${icons.clock}</div>
+                        <span class="text-[10px] text-gray-300">${t.start.speed}</span>
+                    </div>
+                    <div class="bg-white/5 rounded-xl p-3 flex flex-col items-center gap-2 border border-white/5 hover:bg-white/10 transition-colors group">
+                        <div class="text-ompay-orange scale-110">${icons.zap}</div>
+                        <span class="text-[10px] text-gray-300">${t.start.knowledge}</span>
+                    </div>
+                    <div class="bg-white/5 rounded-xl p-3 flex flex-col items-center gap-2 border border-white/5 hover:bg-white/10 transition-colors group">
+                        <div class="text-ompay-orange scale-110">${icons.gift}</div>
+                        <span class="text-[10px] text-gray-300">${t.start.prizes}</span>
+                    </div>
+                </div>
+
+                <!-- Start Button (Image/PNG) with Shine -->
+                <button onclick="startGame()" class="group hover:scale-105 transition-transform duration-300 w-full max-w-[280px] relative">
+                    <div class="relative overflow-hidden rounded-[15px] shadow-[0_10px_30px_rgba(45,19,234,0.3)] border border-white/10">
+                        <img 
+                            src="${btnImageSrc}" 
+                            onerror="this.onerror=null;this.src='${fallbackSrc}';"
+                            alt="${t.start.btn}" 
+                            class="w-full h-auto block"
+                        />
+                        <!-- Shine Layer -->
+                        <div class="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-25deg] animate-shine pointer-events-none"></div>
+                    </div>
+                </button>
+            `;
+            return div;
+        }
+
+        function renderQuizScreen() {
+            const t = content[state.lang];
+            const div = document.createElement('div');
+            div.className = 'flex flex-col h-full p-6 relative z-10 w-full'; // Removed animate-slideUp from main container
+            
+            // Header
+            const streakHTML = `
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/5">
+                   <div class="w-2 h-2 rounded-full ${state.streak > 1 ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}"></div>
+                   <span class="text-xs text-white font-bold">${t.game.streak}: ${state.streak}🔥</span>
+                </div>
+            `;
+
+            const timerHTML = `
+                <div class="relative w-14 h-14 flex items-center justify-center">
+                    <svg class="absolute inset-0 w-full h-full -rotate-90">
+                        <circle cx="28" cy="28" r="24" stroke="rgba(255,255,255,0.1)" stroke-width="4" fill="none"></circle>
+                        <circle id="timer-circle" cx="28" cy="28" r="24" stroke="#FF7800" stroke-width="4" fill="none" stroke-dasharray="150" stroke-dashoffset="0" stroke-linecap="round"></circle>
+                    </svg>
+                    <span id="timer-text" class="text-sm font-bold text-white">${state.timeLeft}</span>
+                </div>
+            `;
+
+            // Question
+            const questionData = t.questions[state.currentQ];
+            const questionHTML = `
+                <div class="relative mb-6">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-ompay-orange to-ompay-blue rounded-[2rem] opacity-30 blur-lg"></div>
+                    <div class="relative bg-[#1a1060]/80 backdrop-blur-xl border border-white/10 rounded-[1.8rem] p-8 min-h-[180px] flex flex-col justify-center shadow-2xl">
+                        <span class="text-ompay-orange text-xs font-bold tracking-widest mb-3 opacity-80 uppercase font-en">
+                            ${t.game.question} ${state.currentQ + 1}/${t.questions.length}
+                        </span>
+                        <h2 class="text-xl md:text-2xl font-bold text-white leading-relaxed">
+                            ${questionData.question}
+                        </h2>
+                    </div>
+                </div>
+            `;
+
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-8">
+                    ${streakHTML}
+                    ${timerHTML}
+                </div>
+                <!-- Wrapper for transitions -->
+                <div id="quiz-body" class="flex-1 flex flex-col animate-slideUp">
+                    ${questionHTML}
+                    <div id="options-container" class="flex-1 flex flex-col gap-3 justify-center"></div>
+                </div>
+            `;
+            
+            // We append options via helper to handle state updates cleanly
+            setTimeout(() => {
+                const optsContainer = div.querySelector('#options-container');
+                renderOptionsButtons(optsContainer);
+            }, 0);
+
+            return div;
+        }
+
+        function renderOptionsButtons(container) {
+            container.innerHTML = '';
+            const t = content[state.lang];
+            const q = t.questions[state.currentQ];
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                
+                let baseClasses = "w-full p-4 rounded-xl border-2 text-start transition-all duration-300 transform active:scale-95 flex items-center justify-between group";
+                let stateClasses = "border-white/10 bg-white/5 text-gray-100 hover:bg-white/10 hover:border-ompay-orange/50";
+                let iconHTML = `<div class="w-2 h-2 rounded-full bg-white/20 group-hover:bg-ompay-orange transition-colors"></div>`;
+
+                if (state.isAnswered) {
+                    btn.disabled = true;
+                    const isCorrect = idx === q.correct;
+                    const isSelected = idx === state.selectedOption;
+
+                    if (isSelected) {
+                        if (isCorrect) {
+                            // User Correct
+                            stateClasses = "border-green-500 bg-green-500/20 text-white shadow-[0_0_15px_rgba(34,197,94,0.3)]";
+                            iconHTML = `<span class="text-green-400">${icons.check}</span>`;
+                        } else {
+                            // User Wrong
+                            stateClasses = "border-red-500 bg-red-500/20 text-white";
+                            iconHTML = `<span class="text-red-400">${icons.x}</span>`;
+                        }
+                    } else {
+                        // Other options (Unselected) - Keep neutral/dimmed
+                        stateClasses = "border-white/5 bg-transparent text-gray-600 opacity-40";
+                        iconHTML = "";
+                    }
+                } else {
+                    btn.onclick = () => handleAnswer(idx);
+                }
+
+                btn.className = `${baseClasses} ${stateClasses}`;
+                btn.innerHTML = `<span class="text-lg font-medium">${opt}</span><div class="w-6 h-6 flex items-center justify-center">${iconHTML}</div>`;
+                container.appendChild(btn);
+            });
+        }
+
+        function renderQuizOptions() {
+            const container = document.getElementById('options-container');
+            if (container) renderOptionsButtons(container);
+        }
+
+        function renderResultScreen() {
+            const t = content[state.lang];
+            const div = document.createElement('div');
+            div.className = 'flex flex-col h-full items-center justify-center p-6 animate-fadeIn relative z-10 w-full';
+            
+            const isWinner = state.score >= 3;
+            const radius = 70;
+            const circumference = 2 * Math.PI * radius;
+            const totalQ = t.questions.length;
+            const offset = circumference - (state.score / totalQ) * circumference;
+
+            // Prize Logic
+            let prizeContent = '';
+            if (isWinner) {
+                if (!state.showPrize) {
+                    prizeContent = `
+                        <button onclick="revealPrize()" class="w-full h-32 bg-gradient-to-br from-ompay-orange to-[#E65100] rounded-2xl flex flex-col items-center justify-center relative overflow-hidden group shadow-[0_10px_30px_rgba(255,120,0,0.3)] transition-transform hover:-translate-y-1 mt-6">
+                            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10"></div>
+                            <div class="text-white mb-2 animate-pulse w-10 h-10 flex justify-center">${icons.gift}</div>
+                            <span class="text-white font-bold text-lg">${t.result.openGift}</span>
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-white/20 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
+                        </button>
+                    `;
+                } else {
+                    prizeContent = `
+                        <div class="w-full bg-white text-ompay-blue rounded-2xl p-6 text-center animate-flipIn shadow-[0_0_40px_rgba(255,255,255,0.4)] relative overflow-hidden mt-6">
+                            <div class="absolute -right-6 -top-6 w-20 h-20 bg-ompay-orange rounded-full opacity-20"></div>
+                            <h3 class="font-bold text-sm text-gray-500 uppercase tracking-widest mb-1">${t.result.prizeLabel}</h3>
+                            <div class="text-3xl font-black mb-2 tracking-tighter font-en">OMPAY<span class="text-ompay-orange">25</span></div>
+                            <p class="text-sm text-gray-600">${t.result.prizeDesc}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            div.innerHTML = `
+                <div class="relative mb-8">
+                    <div class="w-40 h-40 flex items-center justify-center relative">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 160 160">
+                           <circle cx="80" cy="80" r="${radius}" stroke="#2D13EA" stroke-width="10" fill="none" class="opacity-30"></circle>
+                           <circle cx="80" cy="80" r="${radius}" stroke="${isWinner ? '#FF7800' : '#ef4444'}" stroke-width="10" fill="none" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round" class="transition-all duration-1000 ease-out delay-500"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                            <span class="block text-4xl font-black text-white font-en">${state.score}</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest font-en">Score</span>
+                        </div>
+                    </div>
+                    <div class="absolute -top-2 -right-2 bg-white text-ompay-blue p-2 rounded-full shadow-lg animate-bounce">
+                        <div class="w-6 h-6 flex items-center justify-center">${isWinner ? icons.star : icons.moon}</div>
+                    </div>
+                </div>
+
+                <h2 class="text-3xl font-bold text-white mb-2">${t.result.winnerTitle}</h2>
+                <p class="text-gray-300 mb-8 text-center max-w-xs">${isWinner ? t.result.winnerMsg : t.result.loserMsg}</p>
+
+                <div id="prize-container" class="w-full max-w-sm perspective-1000 mb-6 min-h-[128px]">
+                    ${isWinner ? prizeContent : ''}
+                </div>
+
+                <div class="flex gap-3 w-full max-w-sm">
+                    <button onclick="resetGame()" class="flex-1 bg-white/10 hover:bg-white/20 text-white py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                        <span>${icons.refresh}</span> ${t.result.retry}
+                    </button>
+                    <button class="flex-1 bg-ompay-blue border border-ompay-orange/50 hover:bg-[#200db5] text-white py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                        <span>${icons.share}</span> ${t.result.share}
+                    </button>
+                </div>
+            `;
+            return div;
+        }
+
+        function revealPrize() {
+            state.showPrize = true;
+            render(); // Re-render to show prize card
+        }
+
+        // --- Start ---
+        init();
+
+    </script>
+</body>
+</html>
