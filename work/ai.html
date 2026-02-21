@@ -228,12 +228,10 @@
             color: var(--neon-cyan); position: absolute; right: 15px; top: 22px; font-size: 20px;
         }
 
-        /* ----- SVG & Image Containers Fixes ----- */
         .image-wrapper {
             border-radius: 20px; height: 400px; width: 100%; overflow: hidden;
             position: relative; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--glass-border);
-            /* Added Flexbox to perfectly center the SVG elements */
             display: flex; justify-content: center; align-items: center;
             background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
         }
@@ -247,7 +245,6 @@
             border: 4px solid rgba(0,240,255,0.5);
             box-shadow: 0 0 40px rgba(0,240,255,0.3);
             position: relative;
-            /* Added Flexbox to perfectly center the SVG elements */
             display: flex; justify-content: center; align-items: center;
             background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
         }
@@ -257,7 +254,6 @@
             animation: spin 15s linear infinite; pointer-events: none;
         }
 
-        /* Make sure SVG scales properly inside the containers */
         .svg-container {
             width: 100%; height: 100%;
             max-width: 100%; max-height: 100%;
@@ -268,7 +264,6 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Glass Tiles */
         .tiled-content { display: flex; gap: 30px; align-items: stretch; }
         .tile {
             background: rgba(255, 255, 255, 0.02);
@@ -294,28 +289,10 @@
         }
         .tile:hover .icon { transform: scale(1.1) rotate(5deg); }
 
-        /* Charts & Numbers */
         .highlight-numbers-layout { text-align: center; }
         .number { color: var(--neon-cyan); font-size: 100px; font-weight: 900; line-height: 1; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0,240,255,0.4);}
         .number-label { font-size: 30px; color: #fff; }
 
-        .doughnut-chart-container { display: flex; gap: 80px; justify-content: center; align-items: center; }
-        .doughnut-chart {
-            border-radius: 50%; height: 350px; width: 350px; position: relative;
-            background: conic-gradient(var(--neon-cyan) 0% 45%, var(--neon-purple) 45% 75%, var(--neon-pink) 75% 90%, #facc15 90% 100%);
-            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5);
-            transition: transform 0.5s;
-        }
-        .doughnut-chart:hover { transform: scale(1.05) rotate(10deg); }
-        .doughnut-chart::before {
-            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 200px; height: 200px; background: var(--bg-deep); border-radius: 50%;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-        }
-        .legend li { display: flex; align-items: center; font-size: 22px; color: #fff; margin-bottom: 15px; }
-        .legend .color-box { width: 24px; height: 24px; border-radius: 6px; margin-left: 15px; }
-
-        /* Quote Layout */
         .quote-layout { text-align: center; width: 85%; margin: 0 auto; position: relative; }
         .quote-layout blockquote {
             color: #fff; font-size: 44px; line-height: 1.6;
@@ -352,7 +329,6 @@
            ========================================= */
         .pulse-glow { 
             animation: svgPulse 2s infinite alternate; 
-            /* Fix SVG origin scaling issue */
             transform-origin: center;
             transform-box: fill-box;
         }
@@ -376,6 +352,66 @@
 
         .title-text { font-size: 24px; font-weight: bold; fill: #e2e8f0; text-anchor: middle; font-family: 'Cairo', sans-serif;}
         .desc-text { font-size: 14px; fill: #94a3b8; text-anchor: middle; font-family: 'Cairo', sans-serif;}
+
+        /* =========================================
+           10. ANIMATED DOUGHNUT CHART (Slide 10)
+           ========================================= */
+        .doughnut-chart-container { display: flex; gap: 80px; justify-content: center; align-items: center; }
+        
+        .doughnut-wrapper {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5);
+            animation: slowSpin 25s linear infinite; /* الدوران البطيء والمستمر للدائرة */
+        }
+        
+        .donut-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg); /* لجعل البداية من الأعلى */
+            border-radius: 50%;
+        }
+
+        .donut-segment {
+            transition: stroke-dasharray 2s cubic-bezier(0.16, 1, 0.3, 1);
+            stroke-linecap: round;
+        }
+
+        /* الحالة قبل الظهور (لتفعيل الأنميشن) */
+        .slide-wrapper:not(.is-visible) .donut-segment {
+            stroke-dasharray: 0 100 !important;
+        }
+
+        .donut-inner-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-main);
+            /* دوران عكسي لكي يبقى النص معتدلاً أثناء دوران الدائرة */
+            animation: counterSpin 25s linear infinite;
+            text-shadow: 0 0 15px rgba(0,240,255,0.5);
+        }
+
+        @keyframes slowSpin {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes counterSpin {
+            100% { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .legend li { display: flex; align-items: center; font-size: 22px; color: #fff; margin-bottom: 15px; }
+        .legend .color-box { width: 24px; height: 24px; border-radius: 6px; margin-left: 15px; }
+        
+        .counter-container {
+            display: inline-block;
+            min-width: 45px;
+            text-align: left;
+            direction: ltr; /* لضمان ظهور الـ % بجانب الرقم بشكل صحيح */
+        }
 
     </style>
 </head>
@@ -422,11 +458,8 @@
             <h2 class="slide-title anim-right">تاريخ وبدايات المجال</h2>
             <div class="content-area">
                 <div class="two-column">
-                    <!-- العمود الأول: الرسمة (SVG) -->
                     <div class="anim-scale delay-100">
                         <div class="image-wrapper hover-target">
-                            
-                            <!-- بداية رسمة حاسوب تورينج -->
                             <svg class="svg-container" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -438,8 +471,6 @@
                                         <circle cx="10" cy="10" r="3" fill="#ef4444"/>
                                     </pattern>
                                 </defs>
-                    
-                                <!-- Grid Background -->
                                 <g stroke="#334155" stroke-width="1" opacity="0.3">
                                     <line x1="0" y1="100" x2="400" y2="100"/>
                                     <line x1="0" y1="200" x2="400" y2="200"/>
@@ -449,13 +480,9 @@
                                     <line x1="200" y1="0" x2="200" y2="500"/>
                                     <line x1="300" y1="0" x2="300" y2="500"/>
                                 </g>
-                    
                                 <g transform="translate(90, 50)">
-                                    <!-- Main Cabinet -->
                                     <rect x="0" y="0" width="220" height="350" rx="10" fill="url(#metal)" stroke="#0f172a" stroke-width="4"/>
                                     <rect x="10" y="10" width="200" height="330" rx="5" fill="#334155"/>
-                                    
-                                    <!-- Tape Reels (Top) -->
                                     <g transform="translate(60, 60)">
                                         <circle cx="0" cy="0" r="40" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
                                         <circle cx="0" cy="0" r="10" fill="#cbd5e1"/>
@@ -476,29 +503,18 @@
                                             <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="4s" repeatCount="indefinite"/>
                                         </line>
                                     </g>
-                                    
-                                    <!-- Tape -->
                                     <path d="M 60 100 Q 110 140 160 100" fill="none" stroke="#f8fafc" stroke-width="8"/>
-                    
-                                    <!-- Plugboard / Matrices -->
                                     <rect x="20" y="150" width="180" height="170" fill="#0f172a" rx="5"/>
                                     <rect x="30" y="160" width="160" height="150" fill="url(#matrix)"/>
-                                    
-                                    <!-- Wires connecting matrix -->
                                     <path d="M 40 170 Q 80 200 60 250" fill="none" stroke="#eab308" stroke-width="3"/>
                                     <path d="M 120 170 Q 150 220 100 270" fill="none" stroke="#3b82f6" stroke-width="3"/>
                                     <path d="M 180 190 Q 140 240 160 290" fill="none" stroke="#22c55e" stroke-width="3"/>
-                    
                                     <text x="110" y="400" class="title-text">حاسوب آلان تورينج</text>
                                     <text x="110" y="425" class="desc-text">اللبنة الأولى للحوسبة</text>
                                 </g>
                             </svg>
-                            <!-- نهاية الرسمة -->
-
                         </div>
                     </div>
-                    
-                    <!-- العمود الثاني: النصوص -->
                     <div>
                         <ul>
                             <li class="anim-right delay-100 hover-target">بدأ مفهوم الذكاء الاصطناعي يتشكل بشكل فعلي في الخمسينيات.</li>
@@ -575,25 +591,19 @@
             <h2 class="slide-title anim-right">القدرة التنفيذية: الأتمتة</h2>
             <div class="content-area">
                 <div class="two-column">
-                    <!-- العمود الأول: الرسمة -->
                     <div class="anim-scale delay-100">
                         <div class="rounded-img-glow hover-target">
-                            
-                            <!-- بداية رسمة روبوت المستودعات -->
                             <svg class="svg-container" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <linearGradient id="robot-orange" x1="0%" y1="0%" x2="0%" y2="100%">
                                         <stop offset="0%" stop-color="#f97316"/>
                                         <stop offset="100%" stop-color="#c2410c"/>
                                     </linearGradient>
-
                                     <linearGradient id="box-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                                         <stop offset="0%" stop-color="#d1d5db"/>
                                         <stop offset="100%" stop-color="#9ca3af"/>
                                     </linearGradient>
                                 </defs>
-
-                                <!-- Grid Background -->
                                 <g stroke="#334155" stroke-width="1" opacity="0.3">
                                     <line x1="0" y1="100" x2="500" y2="100"/>
                                     <line x1="0" y1="200" x2="500" y2="200"/>
@@ -603,12 +613,8 @@
                                     <line x1="300" y1="0" x2="300" y2="400"/>
                                     <line x1="400" y1="0" x2="400" y2="400"/>
                                 </g>
-
                                 <g transform="translate(160, 180)">
-                                    <!-- Laser Scanner Beam -->
                                     <polygon points="-50,-10 -200,-50 -200,30" fill="rgba(16, 185, 129, 0.2)" class="laser-scan"/>
-                                    
-                                    <!-- Lifted Pallet/Box -->
                                     <g transform="translate(10, -90)">
                                         <rect x="-10" y="70" width="160" height="10" fill="#854d0e"/>
                                         <rect x="0" y="80" width="20" height="10" fill="#713f12"/>
@@ -620,18 +626,12 @@
                                         <circle cx="100" cy="35" r="15" fill="#3b82f6"/>
                                         <path d="M 95 30 L 105 30 L 100 40 Z" fill="#fff"/>
                                     </g>
-
-                                    <!-- Robot Body -->
                                     <rect x="-20" y="0" width="200" height="60" rx="15" fill="url(#robot-orange)" stroke="#1e293b" stroke-width="3"/>
                                     <rect x="0" y="10" width="160" height="15" rx="5" fill="#1e293b"/>
                                     <circle cx="160" cy="30" r="10" fill="#1e293b"/>
-                                    
-                                    <!-- Status Light -->
                                     <circle cx="160" cy="30" r="4" fill="#10b981">
                                         <animate attributeName="opacity" values="1;0.2;1" dur="1s" repeatCount="indefinite"/>
                                     </circle>
-
-                                    <!-- Wheels -->
                                     <g transform="translate(20, 60)">
                                         <circle cx="0" cy="0" r="18" fill="#0f172a" stroke="#475569" stroke-width="4"/>
                                         <circle cx="0" cy="0" r="6" fill="#cbd5e1"/>
@@ -653,17 +653,12 @@
                                             <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="2s" repeatCount="indefinite"/>
                                         </line>
                                     </g>
-
                                     <text x="80" y="130" class="title-text">روبوت المستودعات</text>
                                     <text x="80" y="155" class="desc-text">الرؤية الحاسوبية والتحكم</text>
                                 </g>
                             </svg>
-                            <!-- نهاية الرسمة -->
-
                         </div>
                     </div>
-                    
-                    <!-- العمود الثاني: النصوص -->
                     <div class="anim-right delay-300">
                         <p class="hover-target" style="font-size: 24px; margin-bottom: 25px; line-height: 1.7; color: #cbd5e1;">تُعد <strong>الأتمتة (Automation)</strong> الركيزة الرابعة للتقنية، وتهدف إلى تحويل المهام اليدوية والروتينية المكررة إلى آليات عمل مستقلة بالكامل دون تدخل بشري.</p>
                         <p class="hover-target" style="font-size: 24px; line-height: 1.7; color: #cbd5e1;">من أبرز أمثلتها: أنظمة فلترة وقراءة السير الذاتية التلقائية، وإدارة المخازن اللوجستية الضخمة باستخدام أذرع وروبوتات ذكية لضمان أعلى درجات الدقة والسرعة.</p>
@@ -679,11 +674,8 @@
             <h2 class="slide-title anim-right">التعلم العميق والشبكات العصبية</h2>
             <div class="content-area">
                 <div class="two-column">
-                    <!-- العمود الأول: الرسمة -->
                     <div class="anim-scale delay-100">
                         <div class="image-wrapper hover-target">
-                            
-                            <!-- بداية رسمة دماغ الذكاء الاصطناعي -->
                             <svg class="svg-container" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <radialGradient id="brain-glow" cx="50%" cy="50%" r="50%">
@@ -691,8 +683,6 @@
                                         <stop offset="100%" stop-color="rgba(6, 182, 212, 0)"/>
                                     </radialGradient>
                                 </defs>
-
-                                <!-- Grid Background -->
                                 <g stroke="#334155" stroke-width="1" opacity="0.3">
                                     <line x1="0" y1="100" x2="400" y2="100"/>
                                     <line x1="0" y1="200" x2="400" y2="200"/>
@@ -702,18 +692,11 @@
                                     <line x1="200" y1="0" x2="200" y2="500"/>
                                     <line x1="300" y1="0" x2="300" y2="500"/>
                                 </g>
-
                                 <g transform="translate(200, 200)">
-                                    <!-- تحديد نقطة الارتكاز المركزية للحركة لمنع تحرك الرسمة للزاوية -->
                                     <g class="pulse-glow" style="transform-origin: 0 0;">
-                                        <!-- Outer Glow -->
                                         <circle cx="0" cy="0" r="160" fill="url(#brain-glow)"/>
-                                        
-                                        <!-- Left Hemisphere -->
                                         <path d="M 0,-120 C -80,-120 -140,-50 -120,40 C -100,100 -40,120 0,140 Z" fill="rgba(6, 182, 212, 0.1)" stroke="#06b6d4" stroke-width="2"/>
                                         <path d="M 0,-120 C 80,-120 140,-50 120,40 C 100,100 40,120 0,140 Z" fill="rgba(59, 130, 246, 0.1)" stroke="#3b82f6" stroke-width="2"/>
-
-                                        <!-- Neural Network Nodes & Connections -->
                                         <g stroke="rgba(255,255,255,0.4)" stroke-width="1.5">
                                             <line x1="-30" y1="-80" x2="-80" y2="-40"/>
                                             <line x1="-80" y1="-40" x2="-100" y2="20"/>
@@ -722,7 +705,6 @@
                                             <line x1="-20" y1="100" x2="-30" y2="40"/>
                                             <line x1="-30" y1="40" x2="-80" y2="-40"/>
                                             <line x1="-30" y1="40" x2="-30" y2="-80"/>
-                                            
                                             <line x1="30" y1="-80" x2="80" y2="-40"/>
                                             <line x1="80" y1="-40" x2="100" y2="20"/>
                                             <line x1="100" y1="20" x2="60" y2="80"/>
@@ -730,39 +712,30 @@
                                             <line x1="20" y1="100" x2="30" y2="40"/>
                                             <line x1="30" y1="40" x2="80" y2="-40"/>
                                             <line x1="30" y1="40" x2="30" y2="-80"/>
-
                                             <line x1="-30" y1="-80" x2="30" y2="-80"/>
                                             <line x1="-30" y1="40" x2="30" y2="40"/>
                                             <line x1="-20" y1="100" x2="20" y2="100"/>
                                             <line x1="-80" y1="-40" x2="80" y2="-40" stroke-dasharray="4"/>
                                         </g>
-
-                                        <!-- Glowing Nodes -->
                                         <circle cx="-30" cy="-80" r="6" fill="#06b6d4" class="node-float"/>
                                         <circle cx="-80" cy="-40" r="8" fill="#fff" class="node-float" style="animation-delay: 0.2s"/>
                                         <circle cx="-100" cy="20" r="5" fill="#06b6d4" class="node-float" style="animation-delay: 0.4s"/>
                                         <circle cx="-60" cy="80" r="7" fill="#fff" class="node-float" style="animation-delay: 0.6s"/>
                                         <circle cx="-20" cy="100" r="5" fill="#06b6d4" class="node-float" style="animation-delay: 0.8s"/>
                                         <circle cx="-30" cy="40" r="9" fill="#0ea5e9" class="node-float" style="animation-delay: 1s"/>
-
                                         <circle cx="30" cy="-80" r="6" fill="#3b82f6" class="node-float" style="animation-delay: 0.1s"/>
                                         <circle cx="80" cy="-40" r="8" fill="#fff" class="node-float" style="animation-delay: 0.3s"/>
                                         <circle cx="100" cy="20" r="5" fill="#3b82f6" class="node-float" style="animation-delay: 0.5s"/>
                                         <circle cx="60" cy="80" r="7" fill="#fff" class="node-float" style="animation-delay: 0.7s"/>
                                         <circle cx="20" cy="100" r="5" fill="#3b82f6" class="node-float" style="animation-delay: 0.9s"/>
                                         <circle cx="30" cy="40" r="9" fill="#2563eb" class="node-float" style="animation-delay: 1.1s"/>
-
                                         <text x="0" y="220" class="title-text">دماغ الذكاء الاصطناعي</text>
                                         <text x="0" y="245" class="desc-text">الشبكات العصبية والتعلم العميق</text>
                                     </g>
                                 </g>
                             </svg>
-                            <!-- نهاية الرسمة -->
-
                         </div>
                     </div>
-                    
-                    <!-- العمود الثاني: النصوص -->
                     <div class="anim-right delay-300">
                         <p class="hover-target" style="font-size: 24px; margin-bottom: 25px; line-height: 1.7; color: #cbd5e1;">تُحاكي <strong>الشبكات العصبية (Neural Networks)</strong> طريقة عمل الدماغ البشري في معالجة المعلومات وترابط الخلايا.</p>
                         <p class="hover-target" style="font-size: 24px; line-height: 1.7; color: #cbd5e1;">من خلال <strong>التعلم العميق (Deep Learning)</strong>، تستطيع الأنظمة تحليل كميات هائلة من البيانات، والتعرف على الأنماط المعقدة، واتخاذ قرارات ذكية بشكل مستقل.</p>
@@ -792,18 +765,57 @@
     </div>
 </div>
 
-<!-- Slide 10: Doughnut Chart -->
+<!-- Slide 10: Animated Doughnut Chart & Numbers -->
 <div class="slide-wrapper" id="slide10">
     <div class="glass-panel">
         <h2 class="slide-title anim-right">مصادر البيانات الضخمة</h2>
         <div class="content-area">
             <div class="doughnut-chart-container">
-                <div class="doughnut-chart anim-scale delay-100 hover-target"></div>
+                <!-- الدائرة البيانية المتحركة -->
+                <div class="doughnut-wrapper anim-scale delay-100 hover-target">
+                    <svg viewBox="0 0 42 42" class="donut-svg">
+                        <!-- مسار الخلفية الشفاف -->
+                        <circle cx="21" cy="21" r="15.915494309" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="6"></circle>
+                        
+                        <!-- النسب - يتم رسمها بالأنميشن -->
+                        <!-- 45% النصوص -->
+                        <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="var(--neon-cyan)" stroke-width="6" stroke-dasharray="45 55" stroke-dashoffset="0"></circle>
+                        <!-- 30% الصور -->
+                        <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="var(--neon-purple)" stroke-width="6" stroke-dasharray="30 70" stroke-dashoffset="-45" style="transition-delay: 0.2s;"></circle>
+                        <!-- 15% المستشعرات -->
+                        <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="var(--neon-pink)" stroke-width="6" stroke-dasharray="15 85" stroke-dashoffset="-75" style="transition-delay: 0.4s;"></circle>
+                        <!-- 10% أخرى -->
+                        <circle class="donut-segment" cx="21" cy="21" r="15.915494309" fill="transparent" stroke="#facc15" stroke-width="6" stroke-dasharray="10 90" stroke-dashoffset="-90" style="transition-delay: 0.6s;"></circle>
+                        
+                        <!-- الدائرة الداخلية لإعطاء شكل الـ Doughnut -->
+                        <circle cx="21" cy="21" r="12" fill="var(--glass-bg)" opacity="0.8"></circle>
+                    </svg>
+                    <!-- النص بالمنتصف يدور عكسياً ليظل ثابتاً -->
+                    <div class="donut-inner-text">البيانات</div>
+                </div>
+
+                <!-- عدادات الأرقام (النسب المئوية) -->
                 <ul class="legend anim-right delay-300">
-                    <li class="hover-target"><div class="color-box" style="background-color: var(--neon-cyan);"></div>النصوص واللغات (45%)</li>
-                    <li class="hover-target"><div class="color-box" style="background-color: var(--neon-purple);"></div>الصور والفيديو (30%)</li>
-                    <li class="hover-target"><div class="color-box" style="background-color: var(--neon-pink);"></div>بيانات المستشعرات (15%)</li>
-                    <li class="hover-target"><div class="color-box" style="background-color: #facc15;"></div>بيانات أخرى (10%)</li>
+                    <li class="hover-target">
+                        <div class="color-box" style="background-color: var(--neon-cyan);"></div>
+                        النصوص واللغات
+                        <div class="counter-container"> (<span class="percent-counter" data-target="45">0</span>%)</div>
+                    </li>
+                    <li class="hover-target">
+                        <div class="color-box" style="background-color: var(--neon-purple);"></div>
+                        الصور والفيديو
+                        <div class="counter-container"> (<span class="percent-counter" data-target="30">0</span>%)</div>
+                    </li>
+                    <li class="hover-target">
+                        <div class="color-box" style="background-color: var(--neon-pink);"></div>
+                        بيانات المستشعرات
+                        <div class="counter-container"> (<span class="percent-counter" data-target="15">0</span>%)</div>
+                    </li>
+                    <li class="hover-target">
+                        <div class="color-box" style="background-color: #facc15;"></div>
+                        بيانات أخرى
+                        <div class="counter-container"> (<span class="percent-counter" data-target="10">0</span>%)</div>
+                    </li>
                 </ul>
             </div>
             <p class="anim-up delay-400 hover-target" style="text-align: center; margin-top: 40px; font-style: italic;">
@@ -874,7 +886,7 @@
             });
         });
 
-        // --- 2. Intersection Observer for Scroll Animations ---
+        // --- 2. Intersection Observer for Scroll Animations & Number Counters ---
         const slideWrappers = document.querySelectorAll('.slide-wrapper');
         const progressBar = document.getElementById('progressBar');
         
@@ -888,8 +900,38 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
+
+                    // =========================================
+                    // تشغيل عداد الأرقام (Number Counter Animation)
+                    // =========================================
+                    const counters = entry.target.querySelectorAll('.percent-counter');
+                    counters.forEach(counter => {
+                        const targetValue = +counter.getAttribute('data-target');
+                        let currentValue = 0;
+                        const duration = 1500; // مدة العداد بالملي ثانية
+                        const increment = targetValue / (duration / 16); // 60 لقطة بالثانية
+                        
+                        // نقوم بالتفعيل فقط إذا كان الرقم 0 (لتجنب إعادة التفعيل السريع)
+                        if(counter.innerText == "0") {
+                            const updateCounter = () => {
+                                currentValue += increment;
+                                if (currentValue < targetValue) {
+                                    counter.innerText = Math.ceil(currentValue);
+                                    requestAnimationFrame(updateCounter);
+                                } else {
+                                    counter.innerText = targetValue;
+                                }
+                            };
+                            // تأخير بسيط ليتناسق مع حركة دخول الشريحة
+                            setTimeout(updateCounter, 300); 
+                        }
+                    });
+
                 } else {
                     entry.target.classList.remove('is-visible');
+                    // تصفير العدادات عند الخروج من الشريحة لكي تعود للعمل عند الرجوع إليها
+                    const counters = entry.target.querySelectorAll('.percent-counter');
+                    counters.forEach(counter => counter.innerText = "0");
                 }
             });
         }, observerOptions);
