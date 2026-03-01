@@ -230,6 +230,7 @@
             border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px;
             padding: 20px; color: #fff; font-size: 20px; font-family: 'Cairo', sans-serif;
             resize: none; outline: none; transition: border 0.3s, box-shadow 0.3s;
+            overflow: hidden; /* إزالة السكرول من خانة المدخلات كما هو مطلوب */
         }
         .prompt-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0,242,254,0.2); }
         
@@ -243,7 +244,44 @@
         .magic-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,242,254,0.4); }
         .magic-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* --- 9. CONTROLS --- */
+        /* --- 9. COPY BUTTON --- */
+        .copy-btn {
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #38bdf8;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .copy-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* --- 10. CUSTOM SCROLLBAR FOR API RESULT --- */
+        #apiResultText::-webkit-scrollbar {
+            width: 8px;
+        }
+        #apiResultText::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-bottom-left-radius: 10px;
+        }
+        #apiResultText::-webkit-scrollbar-thumb {
+            background: rgba(52, 211, 153, 0.5);
+            border-radius: 8px;
+        }
+        #apiResultText::-webkit-scrollbar-thumb:hover {
+            background: rgba(52, 211, 153, 0.8);
+        }
+
+        /* --- 11. CONTROLS --- */
         .controls-wrapper {
             position: fixed; bottom: 30px; left: 0; width: 100%;
             display: flex; justify-content: center; z-index: 1000; pointer-events: none;
@@ -286,7 +324,7 @@
     </div>
 
     <header>
-        <div class="logo"><i class="fa-solid fa-microchip"></i> نواف الغلابي</div>
+        <div class="logo"><i class="fa-solid fa-microchip"></i> هندسة الأوامر</div>
     </header>
 
     <div id="slideshow-container">
@@ -522,11 +560,17 @@
                     </div>
 
                     <div id="enhancedPromptResult" class="chat-bubble chat-ai strong" style="display: none; margin-top: 30px; text-align: right; width: 100%; max-width: 100%; padding: 0; overflow: hidden; background: linear-gradient(145deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95)); border: 1px solid rgba(52,211,153,0.4);">
-                        <div style="background: rgba(52,211,153,0.1); padding: 15px 25px; border-bottom: 1px solid rgba(52,211,153,0.2); display: flex; align-items: center; gap: 10px;">
-                            <i class="fa-solid fa-check-double" style="color: #34d399; font-size: 24px;"></i>
-                            <strong style="font-size: 22px; color: #fff;">البرومبت الاحترافي المقترح:</strong>
+                        <div style="background: rgba(52,211,153,0.1); padding: 15px 25px; border-bottom: 1px solid rgba(52,211,153,0.2); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-check-double" style="color: #34d399; font-size: 24px;"></i>
+                                <strong style="font-size: 22px; color: #fff;">البرومبت الاحترافي المقترح:</strong>
+                            </div>
+                            <button class="copy-btn" onclick="copyGeneratedPrompt()" id="copyPromptBtn" style="display: none;">
+                                <i class="fa-regular fa-copy"></i> نسخ
+                            </button>
                         </div>
-                        <div id="apiResultText" style="padding: 25px; font-size: 22px; color: #e2e8f0; line-height: 1.8;">
+                        <!-- تم إضافة سكرول هنا لتمرير النصوص الطويلة -->
+                        <div id="apiResultText" style="padding: 25px; font-size: 22px; color: #e2e8f0; line-height: 1.8; max-height: 40vh; overflow-y: auto;">
                             <!-- Result from API will be injected here -->
                         </div>
                     </div>
@@ -622,6 +666,8 @@
         });
 
         // Interactive Lab API Logic using Groq
+        let lastGeneratedPrompt = "";
+
         async function fetchWithRetry(url, options, retries = 3) {
             let delay = 1000;
             for (let i = 0; i < retries; i++) {
@@ -658,6 +704,7 @@
             loader.style.display = 'block';
             resultBox.style.display = 'none';
             resultText.innerHTML = '';
+            document.getElementById('copyPromptBtn').style.display = 'none';
 
             // Groq API Integration setup
             const apiKey = "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"; 
@@ -665,14 +712,14 @@
             
             const systemPrompt = "أنت خبير في هندسة الأوامر (Prompt Engineering). سيقوم المستخدم بإعطائك أمراً ضعيفاً أو عاماً. مهمتك هي تحويله إلى أمر احترافي قوي جداً وجاهز للنسخ، بحيث يحتوي ضمناً على: الدور، المهمة، السياق، والصيغة المطلوبة. أعطني البرومبت النهائي مباشرة بدون مقدمات أو شرح.";
             
-const payload = {
-    model: "openai/gpt-oss-120b", // تأكد من دقة الاسم
-    messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `قم بتحويل هذا الأمر البسيط إلى برومبت احترافي قوي بلغة عربية: "${userText}"` }
-    ],
-    temperature: 0.7
-};
+            const payload = {
+                model: "openai/gpt-oss-120b", // تأكد من دقة الاسم
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: `قم بتحويل هذا الأمر البسيط إلى برومبت احترافي قوي بلغة عربية: "${userText}"` }
+                ],
+                temperature: 0.7
+            };
 
             const options = {
                 method: 'POST',
@@ -688,6 +735,7 @@ const payload = {
                 const generatedText = response.choices?.[0]?.message?.content;
                 
                 if (generatedText) {
+                    lastGeneratedPrompt = generatedText;
                     resultBox.style.display = 'block';
                     loader.style.display = 'none';
                     let i = 0;
@@ -699,9 +747,12 @@ const payload = {
                                 resultText.innerHTML += generatedText.charAt(i);
                             }
                             i++;
+                            // تمرير السكرول للأسفل تلقائياً أثناء كتابة النص الطويل
+                            resultText.scrollTop = resultText.scrollHeight;
                             setTimeout(typeWriter, 15);
                         } else {
                             btn.disabled = false;
+                            document.getElementById('copyPromptBtn').style.display = 'flex';
                         }
                     }
                     typeWriter();
@@ -714,6 +765,38 @@ const payload = {
                 resultBox.style.display = 'block';
                 resultText.innerHTML = `<span style="color: #f87171;"><i class="fa-solid fa-circle-exclamation"></i> عذراً، حدث خطأ أثناء الاتصال بالذكاء الاصطناعي (Groq). يرجى المحاولة لاحقاً.</span>`;
                 btn.disabled = false;
+            }
+        }
+
+        function copyGeneratedPrompt() {
+            if (!lastGeneratedPrompt) return;
+            
+            const copyBtn = document.getElementById('copyPromptBtn');
+            
+            try {
+                // استخدام document.execCommand لضمان عمل النسخ حتى داخل إطارات iframes
+                const textArea = document.createElement("textarea");
+                textArea.value = lastGeneratedPrompt;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                
+                // تأثير بصري عند نجاح النسخ
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> تم النسخ!';
+                copyBtn.style.background = '#34d399';
+                copyBtn.style.color = '#000';
+                copyBtn.style.borderColor = '#34d399';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = 'rgba(56, 189, 248, 0.2)';
+                    copyBtn.style.color = '#38bdf8';
+                    copyBtn.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
             }
         }
     </script>
