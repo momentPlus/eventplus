@@ -286,7 +286,7 @@
     </div>
 
     <header>
-        <div class="logo"><i class="fa-solid fa-microchip"></i> هندسة الأوامر</div>
+        <div class="logo"><i class="fa-solid fa-microchip"></i> نواف الغلابي</div>
     </header>
 
     <div id="slideshow-container">
@@ -661,18 +661,18 @@
 
             // Groq API Integration setup
             const apiKey = "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"; 
-            const url = "https://corsproxy.io/?https://api.groq.com/openai/v1/chat/completions";
+            const url = "https://api.groq.com/openai/v1/chat/completions";
             
             const systemPrompt = "أنت خبير في هندسة الأوامر (Prompt Engineering). سيقوم المستخدم بإعطائك أمراً ضعيفاً أو عاماً. مهمتك هي تحويله إلى أمر احترافي قوي جداً وجاهز للنسخ، بحيث يحتوي ضمناً على: الدور، المهمة، السياق، والصيغة المطلوبة. أعطني البرومبت النهائي مباشرة بدون مقدمات أو شرح.";
             
-            const payload = {
-                model: "llama3-70b-8192", // Groq fast and capable model
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: `قم بتحويل هذا الأمر البسيط إلى برومبت احترافي قوي: "${userText}"` }
-                ],
-                temperature: 0.7
-            };
+const payload = {
+    model: "openai/gpt-oss-120b", // تأكد من دقة الاسم
+    messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: `قم بتحويل هذا الأمر البسيط إلى برومبت احترافي قوي بلغة عربية: "${userText}"` }
+    ],
+    temperature: 0.7
+};
 
             const options = {
                 method: 'POST',
